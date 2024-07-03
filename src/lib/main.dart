@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/screen/login.dart';
+import 'package:lookout_dev/screen/misc/authenticate.dart';
+import 'package:lookout_dev/wrapper.dart';
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +16,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Placeholder();
+    return MaterialApp(
+      home: Wrapper(),
+    );
   }
 }
