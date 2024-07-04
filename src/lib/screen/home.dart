@@ -13,11 +13,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          iconSize: 40,
-          icon: const Icon(Icons.list),
-          onPressed: () {},
-        ),
         centerTitle: true,
         title: const FittedBox(
           fit: BoxFit.fitWidth,
@@ -33,13 +28,69 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body: const Column(
-        children: <Widget>[
-          EventTile(),
-          EventTile(),
-          EventTile(),
-          EventTile(),
-        ],
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(7, 0, 166, 1),
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Profile'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Sign Out'),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.filter_list),
+                  onPressed: () {}, 
+                ),
+              ],
+            ),
+            EventTile(),
+            EventTile(),
+            EventTile(),
+            EventTile(),
+          ],
+        ),
       ),
     );
   }
