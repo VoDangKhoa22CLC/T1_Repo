@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/screen/info_screen/user_screen.dart';
 import 'package:lookout_dev/screen/login.dart';
 import 'package:lookout_dev/template/event_tile.dart';
 
@@ -48,7 +49,12 @@ class _HomeState extends State<Home> {
             ListTile(
               leading: Icon(Icons.person),
               title: Text('Profile'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserScreen(userName: "Faker"))
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.settings),
@@ -91,10 +97,10 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-            EventTile(EventName: "Event 1"),
-            EventTile(EventName: "T1"),
-            EventTile(EventName: "A",),
-            EventTile(EventName: "c-",),
+            const EventTile(eventName: "Event 1"),
+            const EventTile(eventName: "T1"),
+            const EventTile(eventName: "A",),
+            const EventTile(eventName: "c-",),
           ],
         ),
       ),
