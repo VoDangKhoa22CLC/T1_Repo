@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/screen/login.dart';
 import 'package:lookout_dev/template/event_tile.dart';
 
 class Home extends StatefulWidget {
@@ -18,7 +19,7 @@ class _HomeState extends State<Home> {
           fit: BoxFit.fitWidth,
           child: Text('HCMUS Lookout')
         ),
-        backgroundColor: Color.fromRGBO(7, 0, 166, 1),
+        backgroundColor: const Color.fromRGBO(7, 0, 166, 1),
         elevation: 0,
         actions: <Widget>[
           IconButton(
@@ -32,7 +33,7 @@ class _HomeState extends State<Home> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
                 color: Color.fromRGBO(7, 0, 166, 1),
               ),
@@ -57,7 +58,12 @@ class _HomeState extends State<Home> {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Sign Out'),
-              onTap: () {},
+              onTap: () {
+                // Navigator.push(
+                //     context,
+                //     // MaterialPageRoute(builder: (context) => LogIn(toggle: toggle))
+                // );
+              },
             ),
           ],
         ),
@@ -81,17 +87,32 @@ class _HomeState extends State<Home> {
                 ),
                 IconButton(
                   icon: Icon(Icons.filter_list),
-                  onPressed: () {}, 
+                  onPressed: () {},
                 ),
               ],
             ),
-            EventTile(),
-            EventTile(),
-            EventTile(),
-            EventTile(),
+            EventTile(EventName: "Event 1"),
+            EventTile(EventName: "T1"),
+            EventTile(EventName: "A",),
+            EventTile(EventName: "c-",),
           ],
         ),
       ),
+      // bottomNavigationBar: BottomAppBar(
+      //   color: Color.fromRGBO(7, 0, 166, 100),
+      //   child: Row(
+      //     children: <Widget>[
+      //       IconButton(
+      //         onPressed: () {},
+      //         icon: Icon(Icons.manage_search)
+      //       ),
+      //       IconButton(
+      //           onPressed: () {},
+      //           icon: Icon(Icons.house)
+      //       )
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

@@ -8,7 +8,7 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final u = 2;
+    final u = 1;
 
     if (u == 1){
       return Auth();

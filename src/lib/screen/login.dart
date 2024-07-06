@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/screen/home.dart';
 import 'package:lookout_dev/template/text_input_decorations.dart';
 
 
@@ -61,7 +62,12 @@ class _LogInState extends State<LogIn> {
                 },
               ),
               ElevatedButton(
-                  onPressed: () async {},
+                  onPressed: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Home())
+                    );
+                  },
                   child: const Text("Sign in")
               ),
               const SizedBox(height: 20.0,),
