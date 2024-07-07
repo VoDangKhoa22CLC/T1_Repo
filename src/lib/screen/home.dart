@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
             iconSize: 40,
-            icon: Icon(Icons.person),
+            icon: const Icon(Icons.person),
             onPressed: () {},
           ),
         ],
@@ -47,8 +47,8 @@ class _HomeState extends State<Home> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
               onTap: () {
                 Navigator.push(
                     context,
@@ -57,13 +57,13 @@ class _HomeState extends State<Home> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Sign Out'),
+              leading: const Icon(Icons.logout),
+              title: const Text('Sign Out'),
               onTap: () {
                 // Navigator.push(
                 //     context,
@@ -75,7 +75,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
             Row(
@@ -84,7 +84,7 @@ class _HomeState extends State<Home> {
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: 'Search',
-                      prefixIcon: Icon(Icons.search),
+                      prefixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -92,7 +92,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.filter_list),
+                  icon: const Icon(Icons.filter_list),
                   onPressed: () {},
                 ),
               ],
