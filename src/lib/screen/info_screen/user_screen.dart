@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/screen/info_screen/credits.dart';
 
 class UserScreen extends StatefulWidget {
   final String userName;
@@ -77,7 +78,8 @@ class _UserScreenState extends State<UserScreen> {
                         thickness: 2,
                       ),
                       TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                        },
                         icon: const Icon(Icons.grid_4x4_sharp),
                         label: const Text(
                             "Manage Events",
@@ -105,7 +107,12 @@ class _UserScreenState extends State<UserScreen> {
                         thickness: 2,
                       ),
                       TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const Credits())
+                          );
+                        },
                         icon: const Icon(Icons.density_medium_rounded),
                         label: const Text(
                             "About the App",

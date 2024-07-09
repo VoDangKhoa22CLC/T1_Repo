@@ -1,0 +1,4 @@
+class LookoutEvent{
+  String? eventName;
+
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/screen/info_screen/event_edit.dart';
 
 class EventScreen extends StatefulWidget {
   final String eventName;
@@ -74,18 +75,28 @@ class _EventScreenState extends State<EventScreen> {
                         ),
                       ),
                       TextButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              isFollowed = !isFollowed;
-                            });
-                          },
-                          icon: isFollowed ? const Icon(Icons.notifications_off) : const Icon(Icons.notification_add),
-                          label: Text(
-                            isFollowed ? "Unfollow this event" : "Follow this event",
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                          )
+                        onPressed: () {
+                          setState(() {
+                            isFollowed = !isFollowed;
+                          });
+                        },
+                        icon: isFollowed ? const Icon(Icons.notifications_off) : const Icon(Icons.notification_add),
+                        label: Text(
+                          isFollowed ? "Unfollow this event" : "Follow this event",
+                          style: const TextStyle(
+                            fontSize: 15,
+                          ),
+                        )
+                      ),
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => EventEditPage(eventName: widget.eventName))
+                          );
+                        },
+                        icon: const Icon(Icons.edit),
+                        label : const Text("Edit this event")
                       )
                     ],
                   ),
