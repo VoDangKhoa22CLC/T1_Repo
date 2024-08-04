@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "38111035694",
+    "project_id": "lookout-22clc10-group01",
+    "storage_bucket": "lookout-22clc10-group01.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:38111035694:android:2cc5fd0f271bfae73f3abf",
+        "android_client_info": {
+          "package_name": "com.example.lookout_dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATJqgIor4DKdKfp0FqfHF9-E0Hs1fjfvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
