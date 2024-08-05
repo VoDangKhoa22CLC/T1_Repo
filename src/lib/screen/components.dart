@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:lookout_dev/data/user_class.dart';
 
 const Color kBackgroundColor = Color(0xFFD4DEF7);
 const Color kTextColor = Color(0xFF4879C5);

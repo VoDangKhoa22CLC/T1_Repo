@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lookout_dev/screen/info_screen/user_screen.dart';
-import 'package:lookout_dev/screen/login.dart';
 import 'package:lookout_dev/template/event_tile.dart';
 
 class Home extends StatefulWidget {
