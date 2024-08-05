@@ -5,6 +5,7 @@ import 'package:lookout_dev/template/event_tile.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
+  static String id = 'home_screen';
 
   @override
   State<Home> createState() => _HomeState();
@@ -16,10 +17,8 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const FittedBox(
-          fit: BoxFit.fitWidth,
-          child: Text('HCMUS Lookout')
-        ),
+        title:
+            const FittedBox(fit: BoxFit.fitWidth, child: Text('HCMUS Lookout')),
         backgroundColor: const Color.fromRGBO(7, 0, 166, 1),
         elevation: 0,
         actions: <Widget>[
@@ -52,8 +51,8 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => UserScreen(userName: "Faker"))
-                );
+                    MaterialPageRoute(
+                        builder: (context) => UserScreen(userName: "Faker")));
               },
             ),
             ListTile(
@@ -99,8 +98,12 @@ class _HomeState extends State<Home> {
             ),
             const EventTile(eventName: "Event 1"),
             const EventTile(eventName: "T1"),
-            const EventTile(eventName: "A",),
-            const EventTile(eventName: "c-",),
+            const EventTile(
+              eventName: "A",
+            ),
+            const EventTile(
+              eventName: "c-",
+            ),
           ],
         ),
       ),
