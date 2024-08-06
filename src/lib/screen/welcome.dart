@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'components.dart'; // Ensure these imports are correct
 import 'login.dart';
 import 'signup.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
-class WelcomeView extends StatelessWidget {
-  const WelcomeView({super.key});
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
   static String id = 'welcome_screen';
 
   @override
@@ -16,6 +17,7 @@ class WelcomeView extends StatelessWidget {
           padding: const EdgeInsets.all(25),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
             children: [
               const TopScreenImage(screenImageName: 'home.jpg'),
               Expanded(
@@ -26,9 +28,10 @@ class WelcomeView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const ScreenTitle(title: 'Hello'),
-                      Text(
+                      AutoSizeText(
                         'Welcome to Lookout, your gateway to campus events! Let’s make every moment count together!',
                         textAlign: TextAlign.center,
+                        maxLines: 2,
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: MediaQuery.of(context).size.width *
@@ -40,6 +43,7 @@ class WelcomeView extends StatelessWidget {
                         tag: 'login_btn',
                         child: CustomButton(
                           buttonText: 'Login',
+                          width: 280,
                           onPressed: () {
                             Navigator.pushNamed(context, LoginScreen.id);
                           },

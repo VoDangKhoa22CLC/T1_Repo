@@ -18,8 +18,10 @@ class _HomeWrapperState extends State<HomeWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    if (page == 1)
-      return Home();
-    else return Placeholder();
+    if (page == 1) {
+      return const Home();
+    } else {
+      return const Placeholder();
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lookout_dev/screen/home.dart';
@@ -24,6 +25,8 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,12 +36,12 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Ubuntu',
         ),
       )),
-      initialRoute: WelcomeView.id,
+      initialRoute: WelcomeScreen.id,
       routes: {
-        WelcomeView.id: (context) => WelcomeView(),
-        LoginScreen.id: (context) => LoginScreen(),
-        SignUpScreen.id: (context) => SignUpScreen(),
-        Home.id: (context) => Home(),
+        WelcomeScreen.id: (context) => const WelcomeScreen(),
+        LoginScreen.id: (context) => const LoginScreen(),
+        SignUpScreen.id: (context) => const SignUpScreen(),
+        Home.id: (context) => const Home(),
       },
     );
   }

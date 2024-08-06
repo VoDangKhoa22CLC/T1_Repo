@@ -91,7 +91,7 @@ class ScreenTitle extends StatelessWidget {
 }
 
 class CustomTextField extends StatelessWidget {
-  CustomTextField({super.key, required this.child});
+  const CustomTextField({super.key, required this.child});
   final Widget child;
 
   @override
@@ -127,7 +127,7 @@ Widget buildInputField({
       decoration: InputDecoration(
         border: InputBorder.none,
         hintText: hintText,
-        hintStyle: TextStyle(color: Colors.grey),
+        hintStyle: const TextStyle(color: Colors.grey),
       ),
     ),
   );
