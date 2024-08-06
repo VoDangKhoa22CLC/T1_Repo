@@ -5,6 +5,7 @@ import 'home.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lookout_dev/controller/account.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,22 +17,22 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final controller = AccountController();
-  late String _email;
-  late String _password;
+  late String _email = '';
+  late String _password = '';
   bool _saving = false;
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.popAndPushNamed(context, WelcomeView.id);
+        Navigator.popAndPushNamed(context, WelcomeScreen.id);
         return false;
       },
       child: Scaffold(
         appBar: AppBar(
           leading: BackButton(
             onPressed: () {
-              Navigator.popAndPushNamed(context, WelcomeView.id);
+              Navigator.popAndPushNamed(context, WelcomeScreen.id);
             },
           ),
         ),
@@ -75,33 +76,35 @@ class _LoginScreenState extends State<LoginScreen> {
                             setState(() {
                               _saving = true;
                             });
-                            try {
-                              controller.signIn(
-                                  email: _email, password: _password);
-
+                            var (user, errorMessage) = await controller.signIn(
+                              email: _email,
+                              password: _password,
+                            );
+                            if (user != null) {
                               if (context.mounted) {
                                 setState(() {
                                   _saving = false;
-                                  Navigator.popAndPushNamed(
-                                      context, LoginScreen.id);
                                 });
-                                Navigator.pushNamed(context, Home.id);
+                                Navigator.pushReplacementNamed(
+                                    context, Home.id);
                               }
-                            } catch (e) {
-                              signUpAlert(
-                                context: context,
-                                onPressed: () {
-                                  setState(() {
-                                    _saving = false;
-                                  });
-                                  Navigator.popAndPushNamed(
-                                      context, LoginScreen.id);
-                                },
-                                title: 'WRONG PASSWORD OR EMAIL',
-                                desc:
-                                    'Confirm your email and password and try again',
-                                btnText: 'OK',
-                              ).show();
+                            } else {
+                              if (context.mounted) {
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.error,
+                                  animType: AnimType.topSlide,
+                                  title: 'Login Failed',
+                                  desc: errorMessage,
+                                  headerAnimationLoop: false,
+                                  btnOkOnPress: () {
+                                    setState(() {
+                                      _saving = false;
+                                    });
+                                  },
+                                  btnOkColor: kTextColor,
+                                ).show();
+                              }
                             }
                           },
                           questionPressed: () {

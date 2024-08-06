@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => UserScreen(userName: "Faker")));
+                        builder: (context) => const UserScreen(userName: "Faker")));
               },
             ),
             ListTile(

@@ -43,6 +43,7 @@ dependencies:
   rflutter_alert: ^2.0.7
   loading_overlay: ^0.3.0
   image_picker: ^1.1.2
+  awesome_dialog: ^3.2.1
 
 dev_dependencies:
   flutter_test:

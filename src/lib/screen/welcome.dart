@@ -3,8 +3,8 @@ import 'components.dart'; // Ensure these imports are correct
 import 'login.dart';
 import 'signup.dart';
 
-class WelcomeView extends StatelessWidget {
-  const WelcomeView({super.key});
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
   static String id = 'welcome_screen';
 
   @override

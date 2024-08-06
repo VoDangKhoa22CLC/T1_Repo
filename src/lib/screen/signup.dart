@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lookout_dev/screen/home.dart';
 import 'components.dart';
 import 'welcome.dart';
 import 'login.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/data/user_class.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -28,7 +30,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return CustomTextField(
       child: DropdownButtonFormField(
         value: _userType,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: 'User Type',
         ),
@@ -37,7 +39,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             value: type,
             child: Text(
               type.toString().split('.').last,
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
           );
         }).toList(),
@@ -48,16 +50,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.popAndPushNamed(context, WelcomeView.id);
-        return true;
+    return PopScope(
+      onPopInvoked: (bool didPop) async {
+        if (didPop) return;
+        Navigator.popAndPushNamed(context, WelcomeScreen.id);
       },
       child: Scaffold(
         appBar: AppBar(
           leading: BackButton(
             onPressed: () {
-              Navigator.popAndPushNamed(context, WelcomeView.id);
+              Navigator.popAndPushNamed(context, WelcomeScreen.id);
             },
           ),
         ),
@@ -123,34 +125,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 if (_formKey.currentState!.validate()) {
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   setState(() => _saving = true);
-                                  try {
-                                    await controller.signUp(
-                                      email: _email,
-                                      password: _password,
-                                      name: _name,
-                                      userType: _userType,
-                                    );
+
+                                  var (AppUser? user, String? errorMessage) =
+                                      await controller.signUp(
+                                    email: _email,
+                                    password: _password,
+                                    name: _name,
+                                    userType: _userType,
+                                  );
+                                  if (user != null) {
                                     if (context.mounted) {
-                                      signUpAlert(
+                                      setState(() {
+                                        _saving = false;
+                                      });
+                                      AwesomeDialog(
                                         context: context,
-                                        title: 'GOOD JOB',
-                                        desc: 'Go login now',
-                                        btnText: 'Login Now',
-                                        onPressed: () {
+                                        dialogType: DialogType.success,
+                                        animType: AnimType.topSlide,
+                                        title: 'Sign Up Successful',
+                                        desc: 'Welcome, ${user.name}!',
+                                        headerAnimationLoop: false,
+                                        btnOkOnPress: () {
                                           setState(() => _saving = false);
-                                          Navigator.pushNamed(
-                                              context, LoginScreen.id);
+                                          Navigator.pushReplacementNamed(
+                                              context, Home.id);
                                         },
+                                        btnOkColor: kTextColor,
                                       ).show();
                                     }
-                                  } catch (e) {
-                                    signUpAlert(
-                                      context: context,
-                                      onPressed: () => SystemNavigator.pop(),
-                                      title: 'SOMETHING WRONG',
-                                      desc: 'Close the app and try again',
-                                      btnText: 'Close Now',
-                                    ).show();
+                                  } else {
+                                    print('CHECKKKKK');
+                                    if (context.mounted) {
+                                      AwesomeDialog(
+                                        context: context,
+                                        dialogType: DialogType.error,
+                                        animType: AnimType.topSlide,
+                                        title: 'Sign Up Failed',
+                                        desc: errorMessage,
+                                        headerAnimationLoop: false,
+                                        btnOkOnPress: () {
+                                          setState(() => _saving = false);
+                                        },
+                                        btnOkColor: kTextColor,
+                                      ).show();
+                                    }
                                   }
                                 }
                               },
