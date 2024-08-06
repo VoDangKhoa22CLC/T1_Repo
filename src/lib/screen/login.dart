@@ -85,8 +85,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                 setState(() {
                                   _saving = false;
                                 });
-                                Navigator.pushReplacementNamed(
-                                    context, Home.id);
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.success,
+                                  animType: AnimType.topSlide,
+                                  title: 'Login Successful',
+                                  desc: 'Welcome back, ${user.name}!',
+                                  headerAnimationLoop: false,
+                                  btnOkOnPress: () {
+                                    Navigator.pushReplacementNamed(
+                                        context, Home.id);
+                                  },
+                                  btnOkColor: kTextColor,
+                                ).show();
                               }
                             } else {
                               if (context.mounted) {

@@ -44,6 +44,7 @@ dependencies:
   loading_overlay: ^0.3.0
   image_picker: ^1.1.2
   awesome_dialog: ^3.2.1
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:
