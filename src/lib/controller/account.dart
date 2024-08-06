@@ -42,12 +42,13 @@ class AccountController {
             //profilePicture: await AppUser.loadDefaultProfilePicture(),
           );
         }
-        await _firestore
-            .doc(user.uid)
-            // .set(appUser.toMap())
-            .set({
-          'dummy': 1,
-        }).onError((e, _) => print("Error writing document: $e"));
+        // await _firestore
+        //     .doc(user.uid)
+        //     // .set(appUser.toMap())
+        //     .set({
+        //   'dummy': 1,
+        // }).onError((e, _) => print("Error writing document: $e"));
+        await updateUserData(user.uid, _firestore);
         return (appUser, null);
       }
     } on FirebaseAuthException catch (e) {
@@ -74,6 +75,14 @@ class AccountController {
     }
     return (null, 'An unexpected error occurred');
   }
+
+  // TEST
+  Future updateUserData(String uid, CollectionReference a) async{
+    return await a.doc(uid).set({
+      'lmao' : 69,
+    });
+  }
+
 
   // Sign In
   Future<(AppUser?, String?)> signIn(
