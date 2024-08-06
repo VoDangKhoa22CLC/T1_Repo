@@ -1,6 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lookout_dev/data/user_class.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+const List<String> scopes = <String>[
+  'email',
+  'https://www.googleapis.com/auth/contacts.readonly',
+];
 
 class AccountController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -69,14 +75,6 @@ class AccountController {
     return (null, 'An unexpected error occurred');
   }
 
-  // TEST
-  Future updateUserData(String uid, CollectionReference a) async{
-    return await a.doc(uid).set({
-      'lmao' : 69,
-    });
-  }
-
-
   // Sign In
   Future<(AppUser?, String?)> signIn(
       {required String email, required String password}) async {
@@ -126,6 +124,63 @@ class AccountController {
     } catch (e) {
       print(e.toString());
       return (null, e.toString());
+    }
+    return (null, 'An unexpected error occurred');
+  }
+
+  Future<(AppUser?, String?)> signInWithGoogle() async {
+    try {
+      // Trigger the Google Sign-In flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(
+        scopes: scopes,
+        clientId:
+            '38111035694-40cvokta59paa4b4r3m1fhhkrhcvttuf.apps.googleusercontent.com',
+      ).signInSilently();
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      if (googleAuth?.accessToken == null || googleAuth?.idToken == null) {
+        return (null, 'Google sign in failed');
+      }
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      // Sign in to Firebase with the Google credential
+      UserCredential result = await _auth.signInWithCredential(credential);
+      User? user = result.user;
+
+      if (user != null) {
+        // Check if the user already exists in Firestore
+        DocumentSnapshot doc = await _firestore.doc(user.uid).get();
+
+        if (!doc.exists) {
+          // If the user doesn't exist, create a new user in Firestore
+          AppUser appUser = Student(
+            uid: user.uid,
+            email: user.email!,
+            name: user.displayName ?? '',
+            // You might want to add more fields here
+          );
+          await _firestore.doc(user.uid).set(appUser.toMap());
+          return (appUser, null);
+        } else {
+          // If the user exists, return the existing user data
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          if (data['userType'] == UserType.Student.toString()) {
+            return (Student.fromMap(data), null);
+          } else {
+            return (Club.fromMap(data), null);
+          }
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+      return (null, 'An error occurred during Google sign in');
     }
     return (null, 'An unexpected error occurred');
   }

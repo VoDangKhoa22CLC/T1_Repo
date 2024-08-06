@@ -23,10 +23,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      onPopInvoked: (bool didPop) async {
+        if (didPop) return;
         Navigator.popAndPushNamed(context, WelcomeScreen.id);
-        return false;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -141,7 +141,47 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            var (user, errorMessage) =
+                                await controller.signInWithGoogle();
+                            if (user != null) {
+                              if (context.mounted) {
+                                setState(() {
+                                  _saving = false;
+                                });
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.success,
+                                  animType: AnimType.topSlide,
+                                  title: 'Login Successful',
+                                  desc: 'Welcome back, ${user.name}!',
+                                  headerAnimationLoop: false,
+                                  btnOkOnPress: () {
+                                    Navigator.pushReplacementNamed(
+                                        context, Home.id);
+                                  },
+                                  btnOkColor: kTextColor,
+                                ).show();
+                              }
+                            } else {
+                              if (context.mounted) {
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.error,
+                                  animType: AnimType.topSlide,
+                                  title: 'Login Failed',
+                                  desc: errorMessage,
+                                  headerAnimationLoop: false,
+                                  btnOkOnPress: () {
+                                    setState(() {
+                                      _saving = false;
+                                    });
+                                  },
+                                  btnOkColor: kTextColor,
+                                ).show();
+                              }
+                            }
+                          },
                           icon: CircleAvatar(
                             radius: MediaQuery.of(context).size.width *
                                 0.08, // Responsive radius

@@ -24,6 +24,7 @@ class AppUser {
       'email': email,
       'name': name,
       'userType': userType.toString(),
+      'profile_picture': profilePicture,
     };
   }
 
@@ -34,7 +35,7 @@ class AppUser {
       name: map['name'],
       userType:
           UserType.values.firstWhere((e) => e.toString() == map['userType']),
-      //profilePicture: map['profile_picture'],
+      profilePicture: map['profile_picture'],
     );
   }
 
@@ -76,7 +77,7 @@ class Student extends AppUser {
       uid: map['uid'],
       email: map['email'],
       name: map['name'],
-      //profilePicture: map['profile_picture'],
+      profilePicture: map['profile_picture'],
       studentId: map['studentId'],
       major: map['major'],
       attendedEventIds: List<String>.from(map['attendedEventIds'] ?? []),
@@ -113,7 +114,7 @@ class Club extends AppUser {
       email: map['email'],
       name: map['name'],
       description: map['description'],
-      //profilePicture: map['profile_picture'],
+      profilePicture: map['profile_picture'],
       hostedEventIds: List<String>.from(map['hostedEventIds'] ?? []),
     );
   }
