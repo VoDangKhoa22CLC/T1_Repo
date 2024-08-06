@@ -15,7 +15,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await NotificationService.initNotification();
-  runApp(const MyApp());
 
   // Check the initial auth state
   User? user = FirebaseAuth.instance.currentUser;
