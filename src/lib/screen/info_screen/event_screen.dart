@@ -12,7 +12,8 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
 
   bool isFollowed = false;
-
+  DateTime startDate = DateTime.now();
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +67,7 @@ class _EventScreenState extends State<EventScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Text(startDate.toString()),
                       const Text(
                         "Event Description. Event Description. Event Description. Event Description. Event Description. Event Description."
                         "Event Description. Event Description. Event Description. Event Description. Event Description. Event Description."
