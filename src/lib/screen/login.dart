@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lookout_dev/screen/welcome.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 import 'components.dart';
 import 'home.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -132,15 +133,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             ).show();
                           },
                         ),
-                        Text(
-                          'Sign up using',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: MediaQuery.of(context).size.width *
-                                0.04, // Responsive font size
+                        Row(children: <Widget>[
+                          const Expanded(child: Divider()),
+                          Text(
+                            'OR',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: MediaQuery.of(context).size.width *
+                                  0.04, // Responsive font size
+                            ),
                           ),
-                        ),
-                        IconButton(
+                          const Expanded(child: Divider()),
+                        ]),
+                        SignInButton(
+                          Buttons.google,
+                          text: "Sign in with Google",
                           onPressed: () async {
                             var (user, errorMessage) =
                                 await controller.signInWithGoogle();
@@ -182,13 +189,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             }
                           },
-                          icon: CircleAvatar(
-                            radius: MediaQuery.of(context).size.width *
-                                0.08, // Responsive radius
-                            backgroundColor: Colors.transparent,
-                            child:
-                                Image.asset('assets/images/icons/google.png'),
-                          ),
                         ),
                       ],
                     ),

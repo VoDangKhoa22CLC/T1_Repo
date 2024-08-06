@@ -164,6 +164,7 @@ class AccountController {
             uid: user.uid,
             email: user.email!,
             name: user.displayName ?? '',
+            profilePicture: await AppUser.loadDefaultProfilePicture(),
             // You might want to add more fields here
           );
           await _firestore.doc(user.uid).set(appUser.toMap());
