@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "38111035694",
+    "firebase_url": "https://lookout-22clc10-group01-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "lookout-22clc10-group01",
     "storage_bucket": "lookout-22clc10-group01.appspot.com"
   },
@@ -14,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "38111035694-2nmo3ea7abcsgtjgtk1pkvc1md1aifor.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lookout_dev",
+            "certificate_hash": "d8885bd33654edfb8dd6c57c39efbf3cde877721"
+          }
+        },
+        {
           "client_id": "38111035694-2qnga4nr1m62atru8evaon81kj592ar1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -22,7 +31,7 @@
           }
         },
         {
-          "client_id": "38111035694-40cvokta59paa4b4r3m1fhhkrhcvttuf.apps.googleusercontent.com",
+          "client_id": "38111035694-6qjetlnvp4tt7nskk63p7q8rmrslq65a.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

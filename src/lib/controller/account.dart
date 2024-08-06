@@ -133,9 +133,9 @@ class AccountController {
       // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn(
         scopes: scopes,
-        clientId:
-            '38111035694-40cvokta59paa4b4r3m1fhhkrhcvttuf.apps.googleusercontent.com',
-      ).signInSilently();
+        serverClientId:
+            '38111035694-6qjetlnvp4tt7nskk63p7q8rmrslq65a.apps.googleusercontent.com',
+      ).signIn();
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
