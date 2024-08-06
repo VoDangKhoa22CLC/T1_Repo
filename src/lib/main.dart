@@ -6,12 +6,14 @@ import 'package:lookout_dev/screen/signup.dart';
 import 'package:lookout_dev/screen/welcome.dart';
 
 import 'firebase_options.dart';
+import 'notification_configure/notification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await NotificationService.initNotification();
   runApp(const MyApp());
 }
 //
@@ -42,6 +44,27 @@ class MyApp extends StatelessWidget {
         SignUpScreen.id: (context) => const SignUpScreen(),
         Home.id: (context) => const Home(),
       },
+    );
+  }
+}
+
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  Widget build(BuildContext context) {
+    const secondaryColor = Colors.white;
+    return MaterialApp(
+      navigatorKey: navigatorKey,
+      title: 'Awesome Notification Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        shadowColor: secondaryColor,
+      ),
+      home: const HomeScreen(),
     );
   }
 }
