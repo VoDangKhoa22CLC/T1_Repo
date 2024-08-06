@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lookout_dev/screen/info_screen/calendar_screen.dart';
 import 'package:lookout_dev/screen/info_screen/user_screen.dart';
 import 'package:lookout_dev/template/event_tile.dart';
+import 'package:lookout_dev/controller/account.dart';
+import 'package:lookout_dev/screen/welcome.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,6 +14,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final controller = AccountController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,19 +55,16 @@ class _HomeState extends State<Home> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const UserScreen(userName: "Faker")));
+                        builder: (context) =>
+                            const UserScreen(userName: "Faker")));
               },
             ),
             ListTile(
               leading: const Icon(Icons.calendar_today),
               title: const Text('Calendar'),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Calendar()
-                    )
-                );
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Calendar()));
               },
             ),
             ListTile(
@@ -76,10 +76,8 @@ class _HomeState extends State<Home> {
               leading: const Icon(Icons.logout),
               title: const Text('Sign Out'),
               onTap: () {
-                // Navigator.push(
-                //     context,
-                //     // MaterialPageRoute(builder: (context) => LogIn(toggle: toggle))
-                // );
+                controller.signOut();
+                Navigator.popAndPushNamed(context, WelcomeScreen.id);
               },
             ),
           ],

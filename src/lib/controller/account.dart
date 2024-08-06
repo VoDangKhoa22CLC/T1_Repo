@@ -133,7 +133,7 @@ class AccountController {
       // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn(
         scopes: scopes,
-        serverClientId:
+        clientId:
             '38111035694-6qjetlnvp4tt7nskk63p7q8rmrslq65a.apps.googleusercontent.com',
       ).signIn();
 
@@ -164,6 +164,7 @@ class AccountController {
             uid: user.uid,
             email: user.email!,
             name: user.displayName ?? '',
+            profilePicture: await AppUser.loadDefaultProfilePicture(),
             // You might want to add more fields here
           );
           await _firestore.doc(user.uid).set(appUser.toMap());
