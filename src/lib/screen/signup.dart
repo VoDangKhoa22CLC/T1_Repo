@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:lookout_dev/screen/home.dart';
 import 'components.dart';
 import 'welcome.dart';
@@ -144,6 +143,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         animType: AnimType.topSlide,
                                         title: 'Sign Up Successful',
                                         desc: 'Welcome, ${user.name}!',
+                                        onDismissCallback: (type) {
+                                          setState(() {
+                                            _saving = false;
+                                          });
+                                        },
                                         headerAnimationLoop: false,
                                         btnOkOnPress: () {
                                           setState(() => _saving = false);
@@ -154,7 +158,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       ).show();
                                     }
                                   } else {
-                                    print('CHECKKKKK');
                                     if (context.mounted) {
                                       AwesomeDialog(
                                         context: context,
@@ -162,6 +165,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         animType: AnimType.topSlide,
                                         title: 'Sign Up Failed',
                                         desc: errorMessage,
+                                        onDismissCallback: (type) {
+                                          setState(() {
+                                            _saving = false;
+                                          });
+                                        },
                                         headerAnimationLoop: false,
                                         btnOkOnPress: () {
                                           setState(() => _saving = false);

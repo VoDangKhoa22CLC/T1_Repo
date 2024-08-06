@@ -24,7 +24,6 @@ class AccountController {
         password: password,
       );
       User? user = result.user;
-      print("Signed up user: ${user?.uid}");
       if (user != null) {
         AppUser appUser;
         if (userType == UserType.Student) {
@@ -42,13 +41,7 @@ class AccountController {
             //profilePicture: await AppUser.loadDefaultProfilePicture(),
           );
         }
-        // await _firestore
-        //     .doc(user.uid)
-        //     // .set(appUser.toMap())
-        //     .set({
-        //   'dummy': 1,
-        // }).onError((e, _) => print("Error writing document: $e"));
-        await updateUserData(user.uid, _firestore);
+        await _firestore.doc(user.uid).set(appUser.toMap());
         return (appUser, null);
       }
     } on FirebaseAuthException catch (e) {
@@ -106,7 +99,6 @@ class AccountController {
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage;
-      print(e.toString());
       switch (e.code) {
         case 'user-not-found':
           errorMessage = 'No user found for that email.';
@@ -123,15 +115,18 @@ class AccountController {
         case 'too-many-requests':
           errorMessage = 'Too many requests. Try again later.';
           break;
+        case 'invalid-credential':
+          errorMessage = 'Wrong email or password.';
+          break;
         default:
           errorMessage = 'An undefined error happened.';
       }
+      print(e);
       return (null, errorMessage);
     } catch (e) {
       print(e.toString());
       return (null, e.toString());
     }
-    print('An unexpected error occurred.');
     return (null, 'An unexpected error occurred');
   }
 
