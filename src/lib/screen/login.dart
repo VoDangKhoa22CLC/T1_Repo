@@ -41,160 +41,179 @@ class _LoginScreenState extends State<LoginScreen> {
         body: LoadingOverlay(
           isLoading: _saving,
           child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  const TopScreenImage(screenImageName: 'welcome.png'),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const ScreenTitle(title: 'Login'),
-                        buildInputField(
-                          hintText: 'Email',
-                          onChanged: (value) => _email = value,
-                          validator: (value) => !value!.contains('@')
-                              ? 'Please enter a valid email'
-                              : null, // Can replace with a function here
-                        ),
-                        buildInputField(
-                          hintText: 'Password',
-                          onChanged: (value) => _password = value,
-                          validator: (value) => value!.length < 8
-                              ? 'Password must be at least 8 characters'
-                              : null, // Can replace with a function here
-                          obscureText: true,
-                        ),
-                        CustomBottomScreen(
-                          textButton: 'Login',
-                          heroTag: 'login_btn',
-                          question: 'Forgot password?',
-                          buttonPressed: () async {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            setState(() {
-                              _saving = true;
-                            });
-                            var (user, errorMessage) = await controller.signIn(
-                              email: _email,
-                              password: _password,
-                            );
-                            if (user != null) {
-                              if (context.mounted) {
-                                setState(() {
-                                  _saving = false;
-                                });
-                                AwesomeDialog(
-                                  context: context,
-                                  dialogType: DialogType.success,
-                                  animType: AnimType.topSlide,
-                                  title: 'Login Successful',
-                                  desc: 'Welcome back, ${user.name}!',
-                                  headerAnimationLoop: false,
-                                  btnOkOnPress: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, Home.id);
-                                  },
-                                  btnOkColor: kTextColor,
-                                ).show();
-                              }
-                            } else {
-                              if (context.mounted) {
-                                AwesomeDialog(
-                                  context: context,
-                                  dialogType: DialogType.error,
-                                  animType: AnimType.topSlide,
-                                  title: 'Login Failed',
-                                  desc: errorMessage,
-                                  headerAnimationLoop: false,
-                                  btnOkOnPress: () {
-                                    setState(() {
-                                      _saving = false;
-                                    });
-                                  },
-                                  btnOkColor: kTextColor,
-                                ).show();
-                              }
-                            }
-                          },
-                          questionPressed: () {
-                            signUpAlert(
-                              onPressed: () async {
-                                await FirebaseAuth.instance
-                                    .sendPasswordResetEmail(email: _email);
-                              },
-                              title: 'RESET YOUR PASSWORD',
-                              desc:
-                                  'Click on the button to reset your password',
-                              btnText: 'Reset Now',
-                              context: context,
-                            ).show();
-                          },
-                        ),
-                        Row(children: <Widget>[
-                          const Expanded(child: Divider()),
-                          Text(
-                            'OR',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: MediaQuery.of(context).size.width *
-                                  0.04, // Responsive font size
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          children: [
+                            const TopScreenImage(
+                                screenImageName: 'welcome.png'),
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const ScreenTitle(title: 'Login'),
+                                  buildInputField(
+                                    hintText: 'Email',
+                                    onChanged: (value) => _email = value,
+                                    validator: (value) => !value!.contains('@')
+                                        ? 'Please enter a valid email'
+                                        : null, // Can replace with a function here
+                                  ),
+                                  buildInputField(
+                                    hintText: 'Password',
+                                    onChanged: (value) => _password = value,
+                                    validator: (value) => value!.length < 8
+                                        ? 'Password must be at least 8 characters'
+                                        : null, // Can replace with a function here
+                                    obscureText: true,
+                                  ),
+                                  CustomBottomScreen(
+                                    textButton: 'Login',
+                                    heroTag: 'login_btn',
+                                    question: 'Forgot password?',
+                                    buttonPressed: () async {
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
+                                      setState(() {
+                                        _saving = true;
+                                      });
+                                      var (user, errorMessage) =
+                                          await controller.signIn(
+                                        email: _email,
+                                        password: _password,
+                                      );
+                                      if (user != null) {
+                                        if (context.mounted) {
+                                          setState(() {
+                                            _saving = false;
+                                          });
+                                          AwesomeDialog(
+                                            context: context,
+                                            dialogType: DialogType.success,
+                                            animType: AnimType.topSlide,
+                                            title: 'Login Successful',
+                                            desc: 'Welcome back, ${user.name}!',
+                                            headerAnimationLoop: false,
+                                            btnOkOnPress: () {
+                                              Navigator.pushReplacementNamed(
+                                                  context, Home.id);
+                                            },
+                                            btnOkColor: kTextColor,
+                                          ).show();
+                                        }
+                                      } else {
+                                        if (context.mounted) {
+                                          AwesomeDialog(
+                                            context: context,
+                                            dialogType: DialogType.error,
+                                            animType: AnimType.topSlide,
+                                            title: 'Login Failed',
+                                            desc: errorMessage,
+                                            headerAnimationLoop: false,
+                                            btnOkOnPress: () {
+                                              setState(() {
+                                                _saving = false;
+                                              });
+                                            },
+                                            btnOkColor: kTextColor,
+                                          ).show();
+                                        }
+                                      }
+                                    },
+                                    questionPressed: () {
+                                      signUpAlert(
+                                        onPressed: () async {
+                                          await FirebaseAuth.instance
+                                              .sendPasswordResetEmail(
+                                                  email: _email);
+                                        },
+                                        title: 'RESET YOUR PASSWORD',
+                                        desc:
+                                            'Click on the button to reset your password',
+                                        btnText: 'Reset Now',
+                                        context: context,
+                                      ).show();
+                                    },
+                                  ),
+                                  Row(children: <Widget>[
+                                    const Expanded(child: Divider()),
+                                    Text(
+                                      'OR',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.04, // Responsive font size
+                                      ),
+                                    ),
+                                    const Expanded(child: Divider()),
+                                  ]),
+                                  SignInButton(
+                                    Buttons.google,
+                                    text: "Sign in with Google",
+                                    onPressed: () async {
+                                      var (user, errorMessage) =
+                                          await controller.signInWithGoogle();
+                                      if (user != null) {
+                                        if (context.mounted) {
+                                          setState(() {
+                                            _saving = false;
+                                          });
+                                          AwesomeDialog(
+                                            context: context,
+                                            dialogType: DialogType.success,
+                                            animType: AnimType.topSlide,
+                                            title: 'Login Successful',
+                                            desc: 'Welcome back, ${user.name}!',
+                                            headerAnimationLoop: false,
+                                            btnOkOnPress: () {
+                                              Navigator.pushReplacementNamed(
+                                                  context, Home.id);
+                                            },
+                                            btnOkColor: kTextColor,
+                                          ).show();
+                                        }
+                                      } else {
+                                        if (context.mounted) {
+                                          AwesomeDialog(
+                                            context: context,
+                                            dialogType: DialogType.error,
+                                            animType: AnimType.topSlide,
+                                            title: 'Login Failed',
+                                            desc: errorMessage,
+                                            headerAnimationLoop: false,
+                                            btnOkOnPress: () {
+                                              setState(() {
+                                                _saving = false;
+                                              });
+                                            },
+                                            btnOkColor: kTextColor,
+                                          ).show();
+                                        }
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          const Expanded(child: Divider()),
-                        ]),
-                        SignInButton(
-                          Buttons.google,
-                          text: "Sign in with Google",
-                          onPressed: () async {
-                            var (user, errorMessage) =
-                                await controller.signInWithGoogle();
-                            if (user != null) {
-                              if (context.mounted) {
-                                setState(() {
-                                  _saving = false;
-                                });
-                                AwesomeDialog(
-                                  context: context,
-                                  dialogType: DialogType.success,
-                                  animType: AnimType.topSlide,
-                                  title: 'Login Successful',
-                                  desc: 'Welcome back, ${user.name}!',
-                                  headerAnimationLoop: false,
-                                  btnOkOnPress: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, Home.id);
-                                  },
-                                  btnOkColor: kTextColor,
-                                ).show();
-                              }
-                            } else {
-                              if (context.mounted) {
-                                AwesomeDialog(
-                                  context: context,
-                                  dialogType: DialogType.error,
-                                  animType: AnimType.topSlide,
-                                  title: 'Login Failed',
-                                  desc: errorMessage,
-                                  headerAnimationLoop: false,
-                                  btnOkOnPress: () {
-                                    setState(() {
-                                      _saving = false;
-                                    });
-                                  },
-                                  btnOkColor: kTextColor,
-                                ).show();
-                              }
-                            }
-                          },
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ),
         ),

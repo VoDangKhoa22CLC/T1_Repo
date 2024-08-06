@@ -173,7 +173,7 @@ class CustomBottomScreen extends StatelessWidget {
             tag: heroTag,
             child: CustomButton(
               buttonText: textButton,
-              width: 150,
+              width: 140,
               onPressed: () {
                 buttonPressed();
               },
