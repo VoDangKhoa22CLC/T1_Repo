@@ -20,6 +20,7 @@ void main() async {
   User? user = FirebaseAuth.instance.currentUser;
 
   runApp(MyApp(initialRoute: user != null ? Home.id : WelcomeScreen.id));
+  // runApp(const MainApp());
 }
 //
 // web       1:38111035694:web:42563bc6eb15041d3f3abf

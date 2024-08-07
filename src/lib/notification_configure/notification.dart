@@ -106,7 +106,7 @@ class NotificationService {
       ),
       actionButtons: actionButtons,
       schedule: scheduledTime != null
-        ? NotificationCalendar.fromDate(date: scheduledTime, preciseAlarm: true) : null,
+        ? NotificationCalendar.fromDate(date: scheduledTime, preciseAlarm: true, allowWhileIdle: true) : null,
     );
   }
 
