@@ -4,6 +4,7 @@ import 'package:lookout_dev/screen/info_screen/user_screen.dart';
 import 'package:lookout_dev/template/event_tile.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/screen/welcome.dart';
+import 'package:lookout_dev/screen/create_event.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -114,24 +115,19 @@ class _HomeState extends State<Home> {
             const EventTile(
               eventName: "c-",
             ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateEventScreen()),
+                );
+              },
+              child: Text('Create Event'),
+            ),
           ],
         ),
       ),
-      // bottomNavigationBar: BottomAppBar(
-      //   color: Color.fromRGBO(7, 0, 166, 100),
-      //   child: Row(
-      //     children: <Widget>[
-      //       IconButton(
-      //         onPressed: () {},
-      //         icon: Icon(Icons.manage_search)
-      //       ),
-      //       IconButton(
-      //           onPressed: () {},
-      //           icon: Icon(Icons.house)
-      //       )
-      //     ],
-      //   ),
-      // ),
     );
   }
 }
