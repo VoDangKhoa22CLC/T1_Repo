@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'firebase_options.dart';
 import 'notification_configure/notification.dart';
+import 'package:lookout_dev/screen/create_event.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,10 +53,12 @@ class MyApp extends StatelessWidget {
         LoginScreen.id: (context) => const LoginScreen(),
         SignUpScreen.id: (context) => const SignUpScreen(),
         Home.id: (context) => const Home(),
+        CreateEventScreen.id: (context) => CreateEventScreen(),
       },
     );
   }
 }
+
 
 
 class MainApp extends StatelessWidget {
