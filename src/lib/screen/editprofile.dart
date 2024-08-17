@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:lookout_dev/screen/info_screen/user_screen.dart';
 import 'package:lookout_dev/screen/login.dart';
 import 'package:lookout_dev/template/event_tile.dart';
@@ -15,103 +17,94 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
-          'Profile',
-          style: TextStyle(
-            color: Colors.blue
+          'Edit Profile',
           ),
-          ),
-        backgroundColor: Colors.black87,
         leading: IconButton(
-          onPressed: () {},
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.blue,
+            color: Colors.black,
           ),
+          onPressed: () {},
         ),
-        actions: [
-          IconButton(
-            onPressed: () {}, 
-            icon: Icon(Icons.settings)
-            )
-        ],
       ),
       body: Container(
         // padding: EdgeInsets.all(5),
+        // child: gestureDetector,
         child: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
           },
           child: ListView(
-            children: [
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      width: 75,
-                      height: 75,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 5, color: Colors.blue),
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage('https://pbs.twimg.com/media/GUL20KWXkAAqo4c?format=jpg&name=medium'),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            color: Colors.black.withOpacity(0.4)
-                          )
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 15,
-                      right: 15,
-                      child: Container(
-                        height: 15,
-                        width: 15,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(width: 2.5, color: Colors.blue),
-                          color: Colors.white
-                        ),
-                        child: Icon(
-                          Icons.edit,
-                          color: Colors.indigo,
-                          size: 10,
-                        ),
-                      ),
-                    ),
-
-                  ],
-                ),
-              ),
-              SizedBox(height: 30),
-              textField("Club Name", "Test")
+            children: <Widget>[
+              buildTop(),
+              textField('Name', 'High jump audience'),
+              textField('Email', 'grailmaster01@gmail.com'),
+              textField('Location', 'Fuyuki'),
+              textField('Intro', '', maxLines: 3),
             ],
-          ),
-        ),
+          )
+        )
       ),
     );
   }
 
-  Widget textField(String sectionName, String content) {
+  Widget buildTop() {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        Container(
+          margin: EdgeInsets.only(bottom: 70),
+          child: buildCoverImage(),
+        ),
+        Positioned(
+          top: 70,
+          child: buildProfileImage()
+        )
+      ],
+    );
+  }
+
+  Widget buildCoverImage() {
+    return Container(
+      child: Image.network(
+        'https://cdn.discordapp.com/attachments/633274408554856461/1274320862237036595/shirou_hcmus.jpg?ex=66c1d349&is=66c081c9&hm=c7632f1b70a8933614a2a9b18dd017be1e8394e5cd15732f843c4f6e13cea5a7&',
+        width: double.infinity,
+        height: 140,
+        fit: BoxFit.cover
+      ),
+    );
+  }
+
+  Widget buildProfileImage() {
+    return CircleAvatar(
+      radius: 70,
+      backgroundColor: Colors.black,
+      child: CircleAvatar(
+        radius: 69,
+        backgroundImage: NetworkImage('https://pbs.twimg.com/media/GUL20KWXkAAqo4c?format=jpg&name=medium'),
+      ),
+    );
+  }
+
+  Widget textField(String sectionName, String content, {int maxLines=1}) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 30),
+      padding: EdgeInsets.all(10),
       child: TextField(
-        obscureText: false,
+        // onChanged: ,
+        minLines: 1,
+        maxLines: maxLines,
+        keyboardType: TextInputType.text,
+        style: TextStyle(
+          fontSize: 15
+        ),
         decoration: InputDecoration(
-          suffixIcon: null,
-          contentPadding: EdgeInsets.only(bottom: 5),
-          labelText: sectionName,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: null,
-          hintStyle: TextStyle(
-            fontSize: 10,
-            color: Colors.grey
+          labelText: content != '' ? content : sectionName,
+          hintText: content,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10)
           )
         ),
       ),
