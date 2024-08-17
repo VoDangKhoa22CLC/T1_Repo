@@ -4,6 +4,7 @@ import 'package:lookout_dev/screen/home.dart';
 import 'package:lookout_dev/screen/login.dart';
 import 'package:lookout_dev/screen/signup.dart';
 import 'package:lookout_dev/screen/welcome.dart';
+import 'package:lookout_dev/screen/editprofile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'firebase_options.dart';
@@ -22,6 +23,7 @@ void main() async {
 
   runApp(MyApp(initialRoute: user != null ? Home.id : WelcomeScreen.id));
   // runApp(const MainApp());
+  // runApp(Debug());
 }
 //
 // web       1:38111035694:web:42563bc6eb15041d3f3abf
@@ -29,6 +31,16 @@ void main() async {
 // ios       1:38111035694:ios:f6cd211ab819d97c3f3abf
 // macos     1:38111035694:ios:f6cd211ab819d97c3f3abf
 // windows   1:38111035694:web:4a5ca1db22aa34dc3f3abf
+
+// class Debug extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Debug',
+//       home: EditProfile()
+//     );
+//   }
+// }
 
 class MyApp extends StatelessWidget {
   final String initialRoute;
