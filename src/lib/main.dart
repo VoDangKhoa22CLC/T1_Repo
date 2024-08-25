@@ -44,8 +44,8 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final String initialRoute;
-
   const MyApp({super.key, required this.initialRoute});
+
 
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -53,6 +53,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        primaryColor: const Color.fromRGBO(72, 121, 197, 1),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
             fontFamily: 'Ubuntu',

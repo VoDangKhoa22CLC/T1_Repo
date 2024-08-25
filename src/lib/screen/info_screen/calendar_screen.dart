@@ -48,13 +48,13 @@ class _CalendarState extends State {
       //this button simply add a sample event to the current selected day, for testing.
       floatingActionButton: FloatingActionButton(
         onPressed: (){ 
-          setState(() {
-            if (!eventsAtDay.containsKey(_selectedDay)) {
-              eventsAtDay[_selectedDay!] = [];
-            }
-            eventsAtDay[_selectedDay!]!.add(EventTile(eventName: 'Event'));
-            _selectedEvents.value = _getEventsForDay(_selectedDay!);
-          });
+          // setState(() {
+          //   if (!eventsAtDay.containsKey(_selectedDay)) {
+          //     eventsAtDay[_selectedDay!] = [];
+          //   }
+          //   eventsAtDay[_selectedDay!]!.add(EventTile(eventName: 'Event'));
+          //   _selectedEvents.value = _getEventsForDay(_selectedDay!);
+          // });
         },
         child: Icon(Icons.add),
       ),

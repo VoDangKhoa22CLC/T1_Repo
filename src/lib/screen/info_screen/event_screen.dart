@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/event_edit.dart';
 
 class EventScreen extends StatefulWidget {
-  final String eventName;
-  const EventScreen({super.key, required this.eventName});
+  final EventClass myEvent;
+  const EventScreen({super.key, required this.myEvent});
 
   @override
   State<EventScreen> createState() => _EventScreenState();
@@ -55,7 +56,7 @@ class _EventScreenState extends State<EventScreen> {
                     color: Colors.black,
                     size: 40,
                   ),
-                  title: Text(widget.eventName),
+                  title: Text(widget.myEvent.eventName),
                   subtitle: const Text("Event Organization"),
                 ),
               ),
@@ -94,7 +95,7 @@ class _EventScreenState extends State<EventScreen> {
                         onPressed: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => EventEditPage(eventName: widget.eventName))
+                              MaterialPageRoute(builder: (context) => EventEditPage(eventName: widget.myEvent.eventName))
                           );
                         },
                         icon: const Icon(Icons.edit),

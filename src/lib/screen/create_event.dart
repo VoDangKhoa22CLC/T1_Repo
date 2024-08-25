@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/controller/event.dart';
 
 class CreateEventScreen extends StatefulWidget {
   static const String id = 'create_event_screen';
@@ -11,15 +12,21 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
   String _eventName = '';
   String _eventDescription = '';
-  DateTime? _eventDate;
+  DateTime _eventDate = DateTime(2024);
   String _eventLocation = '';
   String _eventNotes = '';
+  final EventController eventController = EventController();
 
   void _createEvent() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       // create event riel here
-
+      eventController.createEvent(
+          eventName: _eventName,
+          eventTime: _eventDate.toString(),
+          eventLocation: _eventLocation,
+          eventShortDescription: _eventNotes,
+          eventLongDescription: _eventDescription, hostID: "admin");
       // after creating, return to home or pop a noti
       Navigator.pop(context);
     }
@@ -44,7 +51,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Create Event'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -97,13 +104,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _createEvent,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple, 
+                  backgroundColor: Theme.of(context).primaryColor,
                 ),
-                child: Text(
+                child: const Text(
                   'Create Event', 
                   style: TextStyle(color: Colors.white), 
                 ),

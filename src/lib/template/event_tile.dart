@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/event_screen.dart';
 // import 'package:test_backend/models/school_events.dart';
 
 class EventTile extends StatelessWidget {
   // final MyEvent myEvent;
-  final String eventName;
+  final EventClass myEvent;
 
-  const EventTile({super.key, required this.eventName});
+  const EventTile({super.key, required this.myEvent});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class EventTile extends StatelessWidget {
             onTap: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EventScreen(eventName: eventName))
+                  MaterialPageRoute(builder: (context) => EventScreen(myEvent: myEvent,))
               );
             },
             child: ListTile(
@@ -26,7 +27,7 @@ class EventTile extends StatelessWidget {
                 Icons.access_time_rounded,
                 color: Colors.black,
               ),
-              title: Text(eventName),
+              title: Text(myEvent.eventName),
               subtitle: const Text("Sample Info"),
             ),
         ),

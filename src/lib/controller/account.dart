@@ -189,6 +189,7 @@ class AccountController {
   // Sign Out
   Future<void> signOut() async {
     await _auth.signOut();
+    await GoogleSignIn().signOut();
   }
 
   // Get current user

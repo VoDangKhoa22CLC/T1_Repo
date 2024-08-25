@@ -74,7 +74,7 @@ class NotificationService {
     final payload = receivedNotification.payload ?? {};
     if (payload["navigate"] == "true"){
       MyApp.navigatorKey.currentState?.push(
-        MaterialPageRoute(builder: (_) => const EventScreen(eventName: '123')),
+        MaterialPageRoute(builder: (_) => const Placeholder()),
       );
     }
   }
