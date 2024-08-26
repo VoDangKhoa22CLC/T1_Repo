@@ -15,9 +15,19 @@ class EventController {
     required String eventLongDescription,
     required String hostID,
   }) async {
-    EventClass event = EventClass(hostID: hostID, eventName: eventName, eventTime: eventTime, eventLocation: eventLocation, eventShortDescription: eventShortDescription, eventLongDescription: eventLongDescription);
+    EventClass event = EventClass(
+      eventID: "",
+      hostID: hostID,
+      eventName: eventName,
+      eventTime: eventTime,
+      eventLocation: eventLocation,
+      eventShortDescription: eventShortDescription,
+      eventLongDescription: eventLongDescription
+    );
 
-    await _firestore.add(event.toMap());
+    DocumentReference docRef = await _firestore.add(event.toMap());
+    event.eventID = docRef.id;
+    _firestore.doc(event.eventID).set({'eventID': event.eventID}, SetOptions(merge: true));
     return event;
   }
 
@@ -38,7 +48,15 @@ class EventController {
     required String eventLongDescription,
     required String hostID,
   }) async {
-    EventClass event = EventClass(hostID: hostID, eventName: eventName, eventTime: eventTime, eventLocation: eventLocation, eventShortDescription: eventShortDescription, eventLongDescription: eventLongDescription);
+    EventClass event = EventClass(
+      eventID: eventID,
+      hostID: hostID,
+      eventName: eventName,
+      eventTime: eventTime,
+      eventLocation: eventLocation,
+      eventShortDescription: eventShortDescription,
+      eventLongDescription: eventLongDescription
+    );
 
     await _firestore.doc(eventID).set(event.toMap());
     return event;
@@ -56,6 +74,7 @@ class EventController {
   List<EventClass> _eventsFromSnapShot(QuerySnapshot snap){
     return snap.docs.map((e){
       return EventClass(
+        eventID: e.get('eventID'),
         hostID: e.get('hostID'),
         eventName: e.get('eventName'),
         eventTime: e.get('eventTime'),
@@ -73,9 +92,9 @@ class EventController {
 
 
 class EventList extends StatefulWidget {
-  final String search_query;
+  final String searchQuery;
 
-  const EventList({super.key, required this.search_query});
+  const EventList({super.key, required this.searchQuery});
 
   @override
   State<EventList> createState() => _EventListState();
@@ -85,14 +104,26 @@ class _EventListState extends State<EventList> {
   @override
   Widget build(BuildContext context) {
     final events = Provider.of<List<EventClass>?>(context);
+    final filtered = events?.where((event) => event.eventName.contains(widget.searchQuery)).toList();
 
-    return ListView.builder(
+    ListView listView = ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: events != null ? events.length : 0,
       itemBuilder: (context, index){
-        return events![index].eventName.contains(widget.search_query) ? EventTile(myEvent: events[index]) : const Placeholder();
+        return EventTile(myEvent: events![index]);
       }
     );
+
+    ListView filteredView = ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: filtered != null ? filtered.length : 0,
+        itemBuilder: (context, index){
+          return EventTile(myEvent: filtered![index]);
+        }
+    );
+
+    return widget.searchQuery.isEmpty ? listView : filteredView;
   }
 }

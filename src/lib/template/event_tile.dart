@@ -28,7 +28,7 @@ class EventTile extends StatelessWidget {
                 color: Colors.black,
               ),
               title: Text(myEvent.eventName),
-              subtitle: const Text("Sample Info"),
+              subtitle: Text(myEvent.eventShortDescription),
             ),
         ),
       )

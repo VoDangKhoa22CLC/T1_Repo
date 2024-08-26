@@ -24,7 +24,7 @@ class _EventScreenState extends State<EventScreen> {
           fit: BoxFit.fitWidth,
           child: Text('Event'),
         ),
-        backgroundColor: const Color.fromRGBO(7, 0, 166, 1),
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
         actions: <Widget>[
           IconButton(
@@ -57,51 +57,51 @@ class _EventScreenState extends State<EventScreen> {
                     size: 40,
                   ),
                   title: Text(widget.myEvent.eventName),
-                  subtitle: const Text("Event Organization"),
+                  subtitle: Text(widget.myEvent.hostID),
                 ),
               ),
-              Card(
-                color: Colors.blueGrey[80],
-                margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(startDate.toString()),
-                      const Text(
-                        "Event Description. Event Description. Event Description. Event Description. Event Description. Event Description."
-                        "Event Description. Event Description. Event Description. Event Description. Event Description. Event Description."
-                        "Event Description. Event Description. Event Description. Event Description. Event Description. Event Description. ",
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            isFollowed = !isFollowed;
-                          });
-                        },
-                        icon: isFollowed ? const Icon(Icons.notifications_off) : const Icon(Icons.notification_add),
-                        label: Text(
-                          isFollowed ? "Unfollow this event" : "Follow this event",
+              SizedBox(
+                width: 400,
+                child: Card(
+                  color: Colors.blueGrey[80],
+                  margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(widget.myEvent.eventID),
+                        Text(widget.myEvent.eventLongDescription,
                           style: const TextStyle(
                             fontSize: 15,
                           ),
+                        ),
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              isFollowed = !isFollowed;
+                            });
+                          },
+                          icon: isFollowed ? const Icon(Icons.notifications_off) : const Icon(Icons.notification_add),
+                          label: Text(
+                            isFollowed ? "Unfollow this event" : "Follow this event",
+                            style: const TextStyle(
+                              fontSize: 15,
+                            ),
+                          )
+                        ),
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => EventEditScreen(myEvent: widget.myEvent))
+                            );
+                          },
+                          icon: const Icon(Icons.edit),
+                          label : const Text("Edit this event")
                         )
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => EventEditPage(eventName: widget.myEvent.eventName))
-                          );
-                        },
-                        icon: const Icon(Icons.edit),
-                        label : const Text("Edit this event")
-                      )
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               )/**/

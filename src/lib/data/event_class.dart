@@ -1,4 +1,5 @@
 class EventClass{
+  String eventID = "";
   final String hostID;
   final String eventName;
   final String eventTime;
@@ -7,6 +8,7 @@ class EventClass{
   final String eventLongDescription;
 
   EventClass({
+    required this.eventID,
     required this.hostID,
     required this.eventName,
     required this.eventTime,
@@ -15,8 +17,11 @@ class EventClass{
     required this.eventLongDescription
   });
 
+
+
   Map<String, dynamic> toMap(){
     return {
+      'eventID': eventID,
       'hostID': hostID,
       'eventName': eventName,
       'eventTime': eventTime,
@@ -28,12 +33,13 @@ class EventClass{
 
   factory EventClass.fromMap(Map<String, dynamic> map){
     return EventClass(
-        hostID: map['hostID'],
-        eventName: map['eventName'],
-        eventTime: map['eventTime'],
-        eventLocation: map['eventLocation'],
-        eventShortDescription: map['eventShortDescription'],
-        eventLongDescription: map['eventLongDescription']
+      eventID: map['eventID'],
+      hostID: map['hostID'],
+      eventName: map['eventName'],
+      eventTime: map['eventTime'],
+      eventLocation: map['eventLocation'],
+      eventShortDescription: map['eventShortDescription'],
+      eventLongDescription: map['eventLongDescription']
     );
   }
 }

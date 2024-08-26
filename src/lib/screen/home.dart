@@ -19,7 +19,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final controller = AccountController();
-  String _search_query = "";
+  String _searchQuery = "";
+  String _filterQuery = "Q1";
+  final List<String> _filterOptions = <String>["Q1", "Q2", "Q3"];
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +103,9 @@ class _HomeState extends State<Home> {
                   Expanded(
                     child: TextFormField(
                       onChanged: (value) {
-                        _search_query = value;
+                        setState(() {
+                          _searchQuery = value;
+                        });
                       },
                       decoration: InputDecoration(
                         hintText: 'Search',
@@ -112,15 +116,24 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-                  IconButton(
+                  DropdownButton(
+                    value: null,
                     icon: const Icon(Icons.filter_list),
-                    onPressed: () {},
-                  ),
+                    items: _filterOptions.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value){
+                      setState(() {
+                        _filterQuery = value!;
+                      });
+                    }
+                  )
                 ],
               ),
-              Container(
-                child: EventList(search_query: _search_query),
-              ),
+              EventList(searchQuery: _searchQuery),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
