@@ -4,12 +4,11 @@ import 'package:lookout_dev/screen/home.dart';
 import 'package:lookout_dev/screen/login.dart';
 import 'package:lookout_dev/screen/signup.dart';
 import 'package:lookout_dev/screen/welcome.dart';
-import 'package:lookout_dev/screen/editprofile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'firebase_options.dart';
 import 'notification_configure/notification.dart';
-import 'package:lookout_dev/screen/create_event.dart';
+import 'package:lookout_dev/screen/info_screen/event_create.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

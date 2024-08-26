@@ -3,10 +3,9 @@ import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/calendar_screen.dart';
 import 'package:lookout_dev/screen/info_screen/user_screen.dart';
-import 'package:lookout_dev/template/event_tile.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/screen/welcome.dart';
-import 'package:lookout_dev/screen/create_event.dart';
+import 'package:lookout_dev/screen/info_screen/event_create.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {

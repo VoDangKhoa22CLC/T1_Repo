@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/event_edit.dart';
@@ -14,8 +15,38 @@ class _EventScreenState extends State<EventScreen> {
 
   bool isFollowed = false;
   DateTime startDate = DateTime.now();
-  
+  final List<String> _urls = <String>["", "", ""];
+
+
+  Future _loadImage(String inputURL, int index) async {
+    final firebaseStorage = FirebaseStorage.instance.ref().child(inputURL);
+    final url = await firebaseStorage.getDownloadURL();
+    setState(() {
+      _urls[index] = url;
+    });
+  }
+
   @override
+  void initState(){
+    super.initState();
+
+    if (widget.myEvent.eventImage1 != '') {
+      setState(() {
+        _loadImage(widget.myEvent.eventImage1, 0);
+      });
+    }
+    if (widget.myEvent.eventImage2 != '') {
+      setState(() {
+        _loadImage(widget.myEvent.eventImage2, 1);
+      });
+    }
+    if (widget.myEvent.eventImage3 != '') {
+      setState(() {
+        _loadImage(widget.myEvent.eventImage3, 2);
+      });
+    }
+
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -104,6 +135,14 @@ class _EventScreenState extends State<EventScreen> {
                     ),
                   ),
                 ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  _urls[0] != "" ? Image(image: NetworkImage(_urls[0]), width: 120, height: 120) : const SizedBox(width: 120, height: 120),
+                  _urls[1] != "" ? Image(image: NetworkImage(_urls[1]), width: 120, height: 120) : const SizedBox(width: 120, height: 120),
+                  _urls[2] != "" ? Image(image: NetworkImage(_urls[2]), width: 120, height: 120) : const SizedBox(width: 120, height: 120),
+                ],
               )/**/
             ],
           ),

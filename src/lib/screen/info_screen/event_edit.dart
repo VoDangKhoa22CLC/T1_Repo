@@ -31,7 +31,12 @@ class _EventEditScreenState extends State<EventEditScreen> {
         eventTime: _eventDate.toString(),
         eventLocation: _eventLocation,
         eventShortDescription: _eventNotes,
-        eventLongDescription: _eventDescription, hostID: "admin");
+        eventLongDescription: _eventDescription,
+        hostID: "admin",
+        img1: widget.myEvent.eventImage1,
+        img2: widget.myEvent.eventImage2,
+        img3: widget.myEvent.eventImage3
+      );
       // after creating, return to home or pop a noti
       Navigator.pop(context);
       Navigator.pop(context);
@@ -113,6 +118,7 @@ class _EventEditScreenState extends State<EventEditScreen> {
                 ],
               ),
               const SizedBox(height: 20),
+
               ElevatedButton(
                 onPressed: _editEvent,
                 style: ElevatedButton.styleFrom(
