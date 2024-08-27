@@ -47,6 +47,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  void _showVerificationDialog() {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.info,
+      animType: AnimType.topSlide,
+      title: 'Verify Your Email',
+      desc:
+          'A verification email has been sent to your email address. Please verify your email before logging in.',
+      btnOkOnPress: () =>
+          Navigator.pushReplacementNamed(context, LoginScreen.id),
+      btnOkColor: kTextColor,
+    ).show();
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -155,29 +169,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 setState(() {
                                                   _saving = false;
                                                 });
-                                                AwesomeDialog(
-                                                  context: context,
-                                                  dialogType:
-                                                      DialogType.success,
-                                                  animType: AnimType.topSlide,
-                                                  title: 'Sign Up Successful',
-                                                  desc:
-                                                      'Welcome, ${user.name}!',
-                                                  onDismissCallback: (type) {
-                                                    setState(() {
-                                                      _saving = false;
-                                                    });
-                                                  },
-                                                  headerAnimationLoop: false,
-                                                  btnOkOnPress: () {
-                                                    setState(
-                                                        () => _saving = false);
-                                                    Navigator
-                                                        .pushReplacementNamed(
-                                                            context, Home.id);
-                                                  },
-                                                  btnOkColor: kTextColor,
-                                                ).show();
+                                                _showVerificationDialog();
                                               }
                                             } else {
                                               if (context.mounted) {

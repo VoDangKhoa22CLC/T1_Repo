@@ -31,6 +31,8 @@ class AccountController {
       );
       User? user = result.user;
       if (user != null) {
+        await user.sendEmailVerification();
+
         AppUser appUser;
         if (userType == UserType.Student) {
           appUser = Student(
@@ -75,6 +77,12 @@ class AccountController {
     return (null, 'An unexpected error occurred');
   }
 
+  Future<bool> isEmailVerified() async {
+    User? user = _auth.currentUser;
+    await user?.reload();
+    return user?.emailVerified ?? false;
+  }
+
   // Sign In
   Future<(AppUser?, String?)> signIn(
       {required String email, required String password}) async {
@@ -86,6 +94,11 @@ class AccountController {
       User? user = result.user;
 
       if (user != null) {
+        if (!user.emailVerified) {
+          signOut();
+          return (null, 'Please verify your email');
+        }
+
         DocumentSnapshot doc = await _firestore.doc(user.uid).get();
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -119,10 +132,8 @@ class AccountController {
         default:
           errorMessage = 'An undefined error happened.';
       }
-      print(e);
       return (null, errorMessage);
     } catch (e) {
-      print(e.toString());
       return (null, e.toString());
     }
     return (null, 'An unexpected error occurred');
@@ -144,25 +155,10 @@ class AccountController {
     }
   }
 
-  Future<String?> confirmPasswordReset(String code, String newPassword) async {
-    try {
-      await _auth.confirmPasswordReset(code: code, newPassword: newPassword);
-      return null;
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'expired-action-code':
-          return 'The password reset code has expired.';
-        case 'invalid-action-code':
-          return 'The password reset code is invalid.';
-        case 'user-disabled':
-          return 'The user account has been disabled.';
-        case 'user-not-found':
-          return 'No user found for this reset code.';
-        case 'weak-password':
-          return 'The new password is too weak.';
-        default:
-          return 'An error occurred. Please try again.';
-      }
+  Future<void> changePassword(String newPassword) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await user.updatePassword(newPassword);
     }
   }
 
@@ -202,8 +198,7 @@ class AccountController {
             uid: user.uid,
             email: user.email!,
             name: user.displayName ?? '',
-            profilePicture: await AppUser.loadDefaultProfilePicture(),
-            // You might want to add more fields here
+            //profilePicture: await AppUser.loadDefaultProfilePicture(),
           );
           await _firestore.doc(user.uid).set(appUser.toMap());
           return (appUser, null);
@@ -218,7 +213,6 @@ class AccountController {
         }
       }
     } catch (e) {
-      print(e.toString());
       return (null, 'An error occurred during Google sign in');
     }
     return (null, 'An unexpected error occurred');

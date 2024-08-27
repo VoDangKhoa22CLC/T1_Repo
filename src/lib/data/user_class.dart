@@ -8,14 +8,14 @@ class AppUser {
   final String email;
   final String name;
   final UserType userType;
-  final Uint8List? profilePicture;
+  //final Uint8List? profilePicture;
 
   AppUser({
     required this.uid,
     required this.email,
     required this.name,
     required this.userType,
-    this.profilePicture,
+    //this.profilePicture,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,7 +24,7 @@ class AppUser {
       'email': email,
       'name': name,
       'userType': userType.toString(),
-      'profile_picture': profilePicture,
+      //'profile_picture': profilePicture,
     };
   }
 
@@ -35,7 +35,7 @@ class AppUser {
       name: map['name'],
       userType:
           UserType.values.firstWhere((e) => e.toString() == map['userType']),
-      profilePicture: map['profile_picture'],
+      //profilePicture: map['profile_picture'],
     );
   }
 
@@ -55,7 +55,7 @@ class Student extends AppUser {
     required super.uid,
     required super.email,
     required super.name,
-    super.profilePicture,
+    //super.profilePicture,
     this.studentId = '',
     this.major = '',
     this.attendedEventIds = const [],
@@ -77,7 +77,7 @@ class Student extends AppUser {
       uid: map['uid'],
       email: map['email'],
       name: map['name'],
-      profilePicture: map['profile_picture'],
+      //profilePicture: map['profile_picture'],
       studentId: map['studentId'],
       major: map['major'],
       attendedEventIds: List<String>.from(map['attendedEventIds'] ?? []),
@@ -94,7 +94,7 @@ class Club extends AppUser {
       {required super.uid,
       required super.email,
       required super.name,
-      super.profilePicture,
+      //super.profilePicture,
       this.description = '',
       this.hostedEventIds = const []})
       : super(userType: UserType.Club);
@@ -114,7 +114,7 @@ class Club extends AppUser {
       email: map['email'],
       name: map['name'],
       description: map['description'],
-      profilePicture: map['profile_picture'],
+      //profilePicture: map['profile_picture'],
       hostedEventIds: List<String>.from(map['hostedEventIds'] ?? []),
     );
   }
