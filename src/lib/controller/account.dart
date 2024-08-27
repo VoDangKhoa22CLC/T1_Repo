@@ -128,6 +128,44 @@ class AccountController {
     return (null, 'An unexpected error occurred');
   }
 
+  Future<String?> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'invalid-email':
+          return 'The email address is badly formatted.';
+        case 'user-not-found':
+          return 'No user found for that email.';
+        default:
+          return 'An error occurred. Please try again.';
+      }
+    }
+  }
+
+  Future<String?> confirmPasswordReset(String code, String newPassword) async {
+    try {
+      await _auth.confirmPasswordReset(code: code, newPassword: newPassword);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'expired-action-code':
+          return 'The password reset code has expired.';
+        case 'invalid-action-code':
+          return 'The password reset code is invalid.';
+        case 'user-disabled':
+          return 'The user account has been disabled.';
+        case 'user-not-found':
+          return 'No user found for this reset code.';
+        case 'weak-password':
+          return 'The new password is too weak.';
+        default:
+          return 'An error occurred. Please try again.';
+      }
+    }
+  }
+
   Future<(AppUser?, String?)> signInWithGoogle() async {
     try {
       // Trigger the Google Sign-In flow

@@ -4,7 +4,6 @@ import 'package:sign_in_button/sign_in_button.dart';
 import 'components.dart';
 import 'home.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
@@ -21,6 +20,69 @@ class _LoginScreenState extends State<LoginScreen> {
   late String _email = '';
   late String _password = '';
   bool _saving = false;
+
+  void _showResetPasswordDialog(String title, String message) {
+    AwesomeDialog(
+      context: context,
+      dialogType: title == 'Success' ? DialogType.success : DialogType.error,
+      animType: AnimType.topSlide,
+      title: title,
+      desc: message,
+      headerAnimationLoop: false,
+      btnOkOnPress: () {},
+      btnOkColor: kTextColor,
+    ).show();
+  }
+
+  void _handleForgotPassword() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String email = '';
+        return AlertDialog(
+          title: const Text('Reset Password'),
+          backgroundColor: Colors.white,
+          content: TextField(
+            onChanged: (value) {
+              email = value;
+            },
+            decoration: const InputDecoration(
+                hintText: "Enter your email", hoverColor: kBackgroundColor),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel', style: TextStyle(color: kTextColor)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Send Reset Link',
+                  style: TextStyle(color: kTextColor)),
+              onPressed: () async {
+                if (email.isNotEmpty) {
+                  setState(() {
+                    _saving = true;
+                  });
+                  Navigator.of(context).pop();
+                  String? result = await controller.resetPassword(email);
+                  setState(() {
+                    _saving = false;
+                  });
+                  if (result == null) {
+                    _showResetPasswordDialog(
+                        'Success', 'Password reset link sent to your email.');
+                  } else {
+                    _showResetPasswordDialog('Error', result);
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,18 +194,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       }
                                     },
                                     questionPressed: () {
-                                      signUpAlert(
-                                        onPressed: () async {
-                                          await FirebaseAuth.instance
-                                              .sendPasswordResetEmail(
-                                                  email: _email);
-                                        },
-                                        title: 'RESET YOUR PASSWORD',
-                                        desc:
-                                            'Click on the button to reset your password',
-                                        btnText: 'Reset Now',
-                                        context: context,
-                                      ).show();
+                                      // Reset password
+                                      _handleForgotPassword();
                                     },
                                   ),
                                   Row(children: <Widget>[

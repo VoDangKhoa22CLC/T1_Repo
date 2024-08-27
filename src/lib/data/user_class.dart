@@ -8,7 +8,7 @@ class AppUser {
   final String email;
   final String name;
   final UserType userType;
-  final Uint8List? profilePicture; // New field
+  final Uint8List? profilePicture;
 
   AppUser({
     required this.uid,
