@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/calendar_screen.dart';
+import 'package:lookout_dev/screen/info_screen/club_profile.dart';
 import 'package:lookout_dev/screen/info_screen/user_screen.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/screen/welcome.dart';
@@ -88,6 +89,14 @@ class _HomeState extends State<Home> {
                 onTap: () {
                   controller.signOut();
                   Navigator.popAndPushNamed(context, WelcomeScreen.id);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.calendar_today),
+                title: const Text('club profile'),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfileScreen()));
                 },
               ),
             ],
