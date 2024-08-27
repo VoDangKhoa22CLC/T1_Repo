@@ -61,6 +61,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     ).show();
   }
 
+  String? extractAdminAccountName(String input) {
+    if (input.contains('ඞඞlookoutadminඞඞ')) {
+      return input.replaceAll('ඞඞlookoutadminඞඞ', '');
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -95,9 +102,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              if (constraints.maxHeight > 600)
-                                const TopScreenImage(
-                                    screenImageName: 'signup.png'),
+                              const TopScreenImage(
+                                  screenImageName: 'signup.png'),
+                              //if (constraints.maxHeight > 700)
+
                               Expanded(
                                 flex: 2,
                                 child: Padding(
@@ -154,16 +162,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             FocusManager.instance.primaryFocus
                                                 ?.unfocus();
                                             setState(() => _saving = true);
-
-                                            var (
-                                              AppUser? user,
-                                              String? errorMessage
-                                            ) = await controller.signUp(
-                                              email: _email,
-                                              password: _password,
-                                              name: _name,
-                                              userType: _userType,
-                                            );
+                                            AppUser? user;
+                                            String? errorMessage;
+                                            if (extractAdminAccountName(
+                                                        _name) !=
+                                                    null &&
+                                                _userType == UserType.Club) {
+                                              _name = extractAdminAccountName(
+                                                  _name)!;
+                                              (user, errorMessage) =
+                                                  await controller
+                                                      .createAdminAccount(
+                                                email: _email,
+                                                password: _password,
+                                                name: _name,
+                                              );
+                                            } else {
+                                              (user, errorMessage) =
+                                                  await controller.signUp(
+                                                email: _email,
+                                                password: _password,
+                                                name: _name,
+                                                userType: _userType,
+                                              );
+                                            }
                                             if (user != null) {
                                               if (context.mounted) {
                                                 setState(() {

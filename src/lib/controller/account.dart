@@ -239,4 +239,38 @@ class AccountController {
     }
     return null;
   }
+
+  final CollectionReference _adminCollection =
+      FirebaseFirestore.instance.collection('admins');
+
+  Future<void> setAdminRole(String uid) async {
+    await _adminCollection.doc(uid).set({'isAdmin': true});
+  }
+
+  Future<bool> isAdmin() async {
+    User? user = _auth.currentUser;
+    if (user == null) return false;
+    DocumentSnapshot doc = await _adminCollection.doc(user.uid).get();
+    return doc.exists;
+  }
+
+  Future<(AppUser?, String?)> createAdminAccount({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    var (user, error) = await signUp(
+      email: email,
+      password: password,
+      name: name,
+      userType: UserType.Club,
+    );
+
+    if (user != null) {
+      await setAdminRole(user.uid);
+
+      return (user, null);
+    }
+    return (user, error);
+  }
 }
