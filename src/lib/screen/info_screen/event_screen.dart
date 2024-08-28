@@ -1,5 +1,5 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/event_edit.dart';
 
@@ -12,11 +12,9 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-
-  bool isFollowed = false;
+  bool isSubscribed  = false;
   DateTime startDate = DateTime.now();
   final List<String> _urls = <String>["", "", ""];
-
 
   Future _loadImage(String inputURL, int index) async {
     final firebaseStorage = FirebaseStorage.instance.ref().child(inputURL);
@@ -25,9 +23,19 @@ class _EventScreenState extends State<EventScreen> {
       _urls[index] = url;
     });
   }
+  void _toggleSubscription() {
+    setState(() {
+      isSubscribed = !isSubscribed; // Toggle state
+    });
+    if (isSubscribed) {
+      // Handle subscribe action here
+    } else {
+      // Handle unsubscribe action here
+    }
+  }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
     if (widget.myEvent.eventImage1 != '') {
@@ -45,107 +53,183 @@ class _EventScreenState extends State<EventScreen> {
         _loadImage(widget.myEvent.eventImage3, 2);
       });
     }
-
   }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const FittedBox(
-          fit: BoxFit.fitWidth,
-          child: Text('Event'),
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0,
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.star),
-            iconSize: 40,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // Background image
+                    Container(
+                      height: 250,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('images/avatar_default.png'), 
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    // Back button
+                    Positioned(
+                      left: 10,
+                      top: 40,
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    // Avatar and club name
+                    Positioned(
+                      top: 205, // Adjust this value for the elevation of the avatar overlapping background image
+                      left: 20, 
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage: AssetImage('images/avatar_default.png'),
+                          ),
+                          SizedBox(width: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 40), 
+                              Text(
+                                widget.myEvent.hostID,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                // Event details
+                const SizedBox(height: 50),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Event title
+                      Text(
+                        widget.myEvent.eventName,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Event datetime
+                      Text(
+                        '${widget.myEvent.eventTime}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Event location
+                      Text(
+                        'Location: ${widget.myEvent.eventLocation}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Description section
+                      const Divider(),
+                      const Text(
+                        'Description',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.myEvent.eventShortDescription,
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Pictures section
+                      const Divider(),
+                      const Text(
+                        'Pictures',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: _urls.map((url) => _buildPhoto(url)).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                "Event Info:",
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Card(
-                margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0),
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.supervised_user_circle_outlined,
-                    color: Colors.black,
-                    size: 40,
-                  ),
-                  title: Text(widget.myEvent.eventName),
-                  subtitle: Text(widget.myEvent.hostID),
-                ),
-              ),
-              SizedBox(
-                width: 400,
-                child: Card(
-                  color: Colors.blueGrey[80],
-                  margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(widget.myEvent.eventID),
-                        Text(widget.myEvent.eventLongDescription,
-                          style: const TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                        TextButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              isFollowed = !isFollowed;
-                            });
-                          },
-                          icon: isFollowed ? const Icon(Icons.notifications_off) : const Icon(Icons.notification_add),
-                          label: Text(
-                            isFollowed ? "Unfollow this event" : "Follow this event",
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                          )
-                        ),
-                        TextButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => EventEditScreen(myEvent: widget.myEvent))
-                            );
-                          },
-                          icon: const Icon(Icons.edit),
-                          label : const Text("Edit this event")
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  _urls[0] != "" ? Image(image: NetworkImage(_urls[0]), width: 120, height: 120) : const SizedBox(width: 120, height: 120),
-                  _urls[1] != "" ? Image(image: NetworkImage(_urls[1]), width: 120, height: 120) : const SizedBox(width: 120, height: 120),
-                  _urls[2] != "" ? Image(image: NetworkImage(_urls[2]), width: 120, height: 120) : const SizedBox(width: 120, height: 120),
-                ],
-              )/**/
-            ],
+      // Subscribe button
+      bottomNavigationBar: GestureDetector(
+        onTap: _toggleSubscription, // Toggle subscription on tap
+        child: Container(
+          decoration: BoxDecoration(
+            color: isSubscribed ? Colors.grey : Colors.blue, // Change color based on state
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
           ),
+          height: 60,
+          child: Center(
+            child: Text(
+              isSubscribed ? 'Unsubscribe' : 'Subscribe', // Change text based on state
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhoto(String imageUrl) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(
+          imageUrl,
+          width: 100,
+          height: 100,
+          fit: BoxFit.cover,
         ),
       ),
     );
