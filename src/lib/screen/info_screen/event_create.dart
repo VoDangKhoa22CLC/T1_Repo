@@ -77,12 +77,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     }
   }
 
-    Widget _textForm(int minlines, int maxlines, String labelText, String errorPrompt) {
-      return TextFormField(
-        minLines: minlines,
-        maxLines: maxlines,
-        cursorColor: Theme.of(context).primaryColor,
-        decoration: InputDecoration(
+    InputDecoration _textFormInputDecoration(String labelText)  {
+      return InputDecoration(
           labelText: labelText,
           labelStyle: const TextStyle(color: Colors.black87),
           filled: true,
@@ -93,16 +89,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).primaryColor)
           ),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return errorPrompt;
-          }
-          return null;
-        },
-        onSaved: (value) {
-          _eventName = value!;
-        },
       );
     }
 
@@ -123,16 +109,66 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 // Enter event name
-                _textForm(1, 2, 'Event Name', 'Please enter event name.'),
+                TextFormField(
+                  minLines: 1,
+                  maxLines: 2,
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: _textFormInputDecoration('Event Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter event name.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _eventName = value!;
+                  },
+                ),
                 const SizedBox(height: 10),
                 // Enter event location
-                _textForm(1, 2, 'Event Location', 'Please enter event location.'),
+                TextFormField(
+                  minLines: 1,
+                  maxLines: 2,
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: _textFormInputDecoration('Event Location'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter event location.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _eventLocation = value!;
+                  },
+                ),
                 const SizedBox(height: 10),
                 // Enter event description
-                _textForm(1, 4, 'Event Description', 'Please enter an event description'),
+                TextFormField(
+                  minLines: 1,
+                  maxLines: 4,
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: _textFormInputDecoration('Event Description'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an event description.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _eventDescription = value!;
+                  },
+                ),
                 const SizedBox(height: 10),
                 // Enter event notes
-                _textForm(1, 2, 'Event Notes', ' '),
+                TextFormField(
+                  minLines: 1,
+                  maxLines: 2,
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: _textFormInputDecoration('Event Notes'),
+                  onSaved: (value) {
+                    _eventNotes = value!;
+                  },
+                ),
                 const SizedBox(height: 10),
                 // Select Date
                 TextFormField(
