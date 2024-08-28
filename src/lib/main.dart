@@ -6,6 +6,7 @@ import 'package:lookout_dev/screen/signup.dart';
 import 'package:lookout_dev/screen/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'controller/account.dart';
 import 'firebase_options.dart';
 import 'notification_configure/notification.dart';
 import 'package:lookout_dev/screen/info_screen/event_create.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
   final String initialRoute;
   const MyApp({super.key, required this.initialRoute});
 
+
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
@@ -65,7 +67,8 @@ class MyApp extends StatelessWidget {
         LoginScreen.id: (context) => const LoginScreen(),
         SignUpScreen.id: (context) => const SignUpScreen(),
         Home.id: (context) => const Home(),
-        CreateEventScreen.id: (context) => CreateEventScreen(),
+        // CreateEventScreen.id: (context) => CreateEventScreen(AccountController().getCurrentUser() ),
+        // CreateEventScreen.id: (context) => CreateEventScreen(),
         AccountSettingsScreen.id: (context) => const AccountSettingsScreen(),
         EditDisplayNameScreen.id: (context) => const EditDisplayNameScreen(),
         EditEmailScreen.id: (context) => const EditEmailScreen(),

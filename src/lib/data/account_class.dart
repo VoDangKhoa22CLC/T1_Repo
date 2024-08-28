@@ -125,7 +125,7 @@ class Club extends AppUser {
       'profileImage2': profileImage2,
       'profileImage3': profileImage3,
       'verified': verified,
-      'hostedEventsIds': hostedEventIds
+      'hostedEventIds': hostedEventIds
     });
     return map;
   }

@@ -10,6 +10,9 @@ import '../../data/event_class.dart';
 
 class CreateEventScreen extends StatefulWidget {
   static const String id = 'create_event_screen';
+  final Club myClub;
+
+  const CreateEventScreen({super.key, required this.myClub});
 
   @override
   _CreateEventScreenState createState() => _CreateEventScreenState();
@@ -41,25 +44,22 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     });
   }
 
-  void _createEvent() async {
+  void _createEvent(){
     if (_formKey.currentState!.validate()) {
-       AppUser? currentUser = await AccountController().getCurrentUser();
       _formKey.currentState!.save();
       // create event riel here
-      EventClass ev = eventController.createEvent(
+      eventController.createEvent(
         eventName: _eventName,
         eventTime: _eventDate.toString(),
         eventLocation: _eventLocation,
         eventShortDescription: _eventNotes,
         eventLongDescription: _eventDescription,
-        hostID: currentUser!.uid,
+        hostID: widget.myClub.uid,
         img1: _pickedImage[0],
         img2: _pickedImage[1],
         img3: _pickedImage[2],
-      ) as EventClass;
-      AccountController().appendEvents(ev.eventID);
-      // after creating, return to home or pop a noti
-      if (context.mounted) Navigator.of(context).pop();
+      );
+      Navigator.pop(context);
     }
   }
 

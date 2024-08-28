@@ -46,7 +46,6 @@ class _EventScreenState extends State<EventScreen> {
           isStudent = true;
         });
       }
-
   }
 
   @override

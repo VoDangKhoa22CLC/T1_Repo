@@ -148,16 +148,16 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-                );
-              },
-              child: const Text('Edit Profile', style: TextStyle(fontSize: 16)),
-            ),
+            // const SizedBox(height: 20),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+            //     );
+            //   },
+            //   child: const Text('Edit Profile', style: TextStyle(fontSize: 16)),
+            // ),
           ],
         ),
       ),

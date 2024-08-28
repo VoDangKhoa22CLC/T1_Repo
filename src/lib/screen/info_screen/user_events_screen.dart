@@ -1,15 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/controller/account.dart';
+import 'package:lookout_dev/controller/event.dart';
+import 'package:lookout_dev/data/event_class.dart';
 
-class UserEventsScreen extends StatelessWidget {
+import '../../data/account_class.dart';
+
+class UserEventsScreen extends StatefulWidget {
+  final Club myClub;
+  const UserEventsScreen({super.key, required this.myClub});
+
+  @override
+  State<UserEventsScreen> createState() => _UserEventsScreenState();
+}
+
+class _UserEventsScreenState extends State<UserEventsScreen> {
+
+  List<EventClass> events = <EventClass>[];
+  final _eventController = EventController();
+
+  Future _getAllRelatedEvents() async{
+    List<EventClass> eventsNew = <EventClass>[];
+    List<String>? idList = await AccountController().relatedEvents;
+    if (idList != null){
+      for (String s in idList){
+        EventClass? ev = await _eventController.getEvent(eventID: s);
+        if (ev != null) {
+          eventsNew.add(ev as EventClass);
+        }
+      }
+    }
+    setState(() {
+      events = eventsNew;
+    });
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _getAllRelatedEvents();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Placeholder
-    final events = [
-      {'name': 'Event 1', 'time': '10:00 AM'},
-      {'name': 'Event 2', 'time': '2:00 PM'},
-      {'name': 'Event 3', 'time': '6:00 PM'},
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Events'),
@@ -20,8 +53,8 @@ class UserEventsScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final event = events[index];
           return ListTile(
-            title: Text(event['name']!),
-            subtitle: Text(event['time']!),
+            title: Text(event.eventName),
+            subtitle: Text(event.eventTime),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -36,7 +69,7 @@ class UserEventsScreen extends StatelessWidget {
                   onPressed: () {
                     // Placeholder
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Deleted ${event['name']}')),
+                      SnackBar(content: Text('Deleted ${event.eventName}')),
                     );
                   },
                 ),

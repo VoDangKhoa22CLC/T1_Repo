@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:lookout_dev/screen/info_screen/user_events_screen.dart';
 
 import '../data/account_class.dart';
+import 'info_screen/profile_edit.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -74,7 +75,7 @@ class _HomeState extends State<Home> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                 ),
-                child: Column(
+                child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
                     Text(
@@ -111,7 +112,7 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const UserScreen(userName: "Faker"),
+                      builder: (context) => ProfileScreen(currentClub: _currentUser as Club),
                     ),
                   );
                 },
@@ -126,16 +127,34 @@ class _HomeState extends State<Home> {
                   );
                 },
               ),
-              // Nút "MANAGE EVENTS" nằm giữa "Calendar" và "Settings"
-              ListTile(
-                leading: const Icon(Icons.event),
-                title: const Text('MANAGE EVENTS'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => UserEventsScreen()),
-                  );
-                },
+              Visibility(
+                visible: _currentUser is Club,
+                child: ListTile(
+                  leading: const Icon(Icons.event),
+                  title: const Text('Manage Events'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => UserEventsScreen(myClub: _currentUser as Club)),
+                    );
+                  },
+                ),
+              ),
+              Visibility(
+                visible: _currentUser is Club,
+                child: ListTile(
+                  leading: const Icon(Icons.calendar_today),
+                  title: const Text('Manage Profile'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EditProfileScreen(myClub: _currentUser as Club),
+                      ),
+                    );
+                  },
+                ),
               ),
               ListTile(
                 leading: const Icon(Icons.settings),
@@ -183,22 +202,6 @@ class _HomeState extends State<Home> {
                     },
                   );
                 },
-              ),
-              Visibility(
-                visible: _currentUser is Club,
-                child: ListTile(
-                  leading: const Icon(Icons.calendar_today),
-                  title: const Text('Club Profile'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ProfileScreen(currentClub: _currentUser as Club),
-                      ),
-                    );
-                  },
-                ),
               ),
             ],
           ),
@@ -293,7 +296,7 @@ class _HomeState extends State<Home> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CreateEventScreen()),
+                MaterialPageRoute(builder: (context) => CreateEventScreen(myClub: _currentUser as Club,)),
               );
             },
             child: const Text('CREATE EVENT'),

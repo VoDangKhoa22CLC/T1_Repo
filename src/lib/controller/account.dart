@@ -349,6 +349,13 @@ class AccountController {
     }
   }
 
+  Future<Club?> getClub({required String clubID}) async {
+    DocumentSnapshot eventDoc = await _firestore.doc(clubID).get();
+    Map<String, dynamic> data = eventDoc.data() as Map<String, dynamic>;
+
+    return Club.fromMap(data);
+  }
+
   final CollectionReference _adminCollection =
       FirebaseFirestore.instance.collection('admins');
 
@@ -381,5 +388,36 @@ class AccountController {
       return (user, null);
     }
     return (user, error);
+  }
+
+  Future<Club?> editClubProfile({
+    required String uid,
+    required String email,
+    required String name,
+    required UserType userType,
+    required String description,
+    required List<String> hostedEventIds,
+    required String profilePicture,
+    required String profileImage1,
+    required String profileImage2,
+    required String profileImage3,
+    required String verified,
+  }) async {
+    Club thisClub = Club(
+      uid: uid,
+      email: email,
+      name: name,
+      description: description,
+      hostedEventIds: hostedEventIds,
+      profilePicture:  profilePicture,
+      profileImage1: profileImage1,
+      profileImage2: profileImage2,
+      profileImage3: profileImage3,
+      verified: verified,
+    );
+
+    await _firestore.doc(uid).set(thisClub.toMap());
+
+    return thisClub;
   }
 }

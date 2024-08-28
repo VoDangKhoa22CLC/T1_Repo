@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/template/event_tile.dart';
 import 'package:provider/provider.dart';
@@ -45,22 +46,25 @@ class EventController {
     event.eventID = docRef.id;
 
     if (img1 != null){
-      path1 = "pictures/${event.eventID}/${img1.name}";
+      path1 = "pictures/event/${event.eventID}/${img1.name}";
       final refPic1 = _storage.child(path1);
       refPic1.putFile(File(img1.path!));
     }
 
     if (img2 != null){
-      path2 = "pictures/${event.eventID}/${img2.name}";
+      path2 = "pictures/event/${event.eventID}/${img2.name}";
       final refPic2 = _storage.child(path2);
       refPic2.putFile(File(img2.path!));
     }
 
     if (img3 != null){
-      path3 = "pictures/${event.eventID}/${img3.name}";
+      path3 = "pictures/event/${event.eventID}/${img3.name}";
       final refPic3 = _storage.child(path3);
       refPic3.putFile(File(img3.path!));
     }
+
+    AccountController().appendEvents(event.eventID);
+
     _firestore.doc(event.eventID).set({'eventID': event.eventID, 'eventImage1': path1, 'eventImage2': path2, 'eventImage3':path3}, SetOptions(merge: true));
     return event;
   }
@@ -79,11 +83,10 @@ class EventController {
     required String eventShortDescription,
     required String eventLongDescription,
     required String hostID,
-    required String img1,
-    required String img2,
-    required String img3,
     required int subscribers,
   }) async {
+    DocumentSnapshot dc = await _firestore.doc(eventID).get();
+    Map<String, dynamic> thisEvent = dc.data() as Map<String, dynamic>;
     EventClass event = EventClass(
       eventID: eventID,
       hostID: hostID,
@@ -92,14 +95,32 @@ class EventController {
       eventLocation: eventLocation,
       eventShortDescription: eventShortDescription,
       eventLongDescription: eventLongDescription,
-      eventImage1: img1,
-      eventImage2: img2,
-      eventImage3: img3,
+      eventImage1: thisEvent['eventImage1'],
+      eventImage2: thisEvent['eventImage2'],
+      eventImage3: thisEvent['eventImage3'],
       subscribers: subscribers,
     );
 
     await _firestore.doc(eventID).set(event.toMap());
     return event;
+  }
+
+  Future editImages(String eventID, int imageIndex, String changes, PlatformFile? newImage) async{
+    DocumentSnapshot dc = await _firestore.doc(eventID).get();
+    Map<String, dynamic> thisEvent = dc.data() as Map<String, dynamic>;
+
+    if (changes == "delete"){
+      thisEvent['eventImage$imageIndex'] = "";
+    }
+    else if ((changes == "new") & (newImage != null)){
+
+      String imgPath = "pictures/event/$eventID/${newImage?.name}";
+      final refPic1 = _storage.child(imgPath);
+      refPic1.putFile(File(newImage!.path!));
+      thisEvent['eventImage$imageIndex'] = imgPath;
+    }
+
+    await _firestore.doc(eventID).set(thisEvent, SetOptions(merge: true));
   }
 
   Future<EventClass?> getEvent({
