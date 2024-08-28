@@ -118,7 +118,8 @@ class _HomeState extends State<Home> {
               ListTile(
                 leading: const Icon(Icons.settings),
                 title: const Text('Settings'),
-                onTap: () {},
+                onTap: () =>
+                    Navigator.pushNamed(context, 'account_settings_screen'),
               ),
               ListTile(
                 leading: const Icon(Icons.logout),
@@ -154,7 +155,8 @@ class _HomeState extends State<Home> {
               // Container for search bar and filter button with rounded bottom edges
               Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor, // Same color as the app bar
+                  color: Theme.of(context)
+                      .primaryColor, // Same color as the app bar
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(16.0),
                     bottomRight: Radius.circular(16.0),
@@ -174,21 +176,26 @@ class _HomeState extends State<Home> {
                         decoration: InputDecoration(
                           hintText: 'Search',
                           fillColor: Colors.white,
-                          filled: true, // To make sure the input field has a white background
+                          filled:
+                              true, // To make sure the input field has a white background
                           prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(60.0),
-                            borderSide: BorderSide.none, // No border to blend with the container
+                            borderSide: BorderSide
+                                .none, // No border to blend with the container
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8.0), // Space between the search bar and dropdown
+                    const SizedBox(
+                        width:
+                            8.0), // Space between the search bar and dropdown
                     // Filter button
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.white, // White background for the dropdown
+                        color:
+                            Colors.white, // White background for the dropdown
                         borderRadius: BorderRadius.circular(60.0),
                       ),
                       child: DropdownButtonHideUnderline(
