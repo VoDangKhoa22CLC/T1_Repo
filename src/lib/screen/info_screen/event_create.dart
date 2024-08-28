@@ -172,21 +172,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     }
                   },
                 ),
-                // SizedBox(height: 20),
-                // Row(
-                //   children: [
-                //     Text(
-                //       _eventDate == null
-                //           ? 'Select Date'
-                //           : 'Date: ${_eventDate!.toLocal()}'.split(' ')[0],
-                //     ),
-                //     IconButton(
-                //       icon: Icon(Icons.calendar_today),
-                //       onPressed: () => _selectDate(context),
-                //     ),
-                //   ],
-                // ),
-                // const SizedBox(height: 20),
                 // Add image section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
