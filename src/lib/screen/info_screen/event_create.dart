@@ -150,6 +150,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 // Select Date
                 TextFormField(
                   controller: TextEditingController(text: _eventDate.toLocal().toString().split(' ')[0]),
+                  readOnly: true,
                   decoration: InputDecoration(
                     labelText: 'Date',
                     suffixIcon: IconButton(
@@ -167,6 +168,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           (int.parse(year) == DateTime.now().year && int.parse(month) == DateTime.now().month && int.parse(day) < DateTime.now().day)
                           )
                         return 'Please enter a valid date';
+                      return null;
                     }
                   },
                 ),
