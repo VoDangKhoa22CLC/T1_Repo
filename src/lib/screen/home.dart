@@ -8,6 +8,7 @@ import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/screen/welcome.dart';
 import 'package:lookout_dev/screen/info_screen/event_create.dart';
 import 'package:provider/provider.dart';
+import 'package:lookout_dev/screen/info_screen/user_events_screen.dart';
 
 import '../data/account_class.dart';
 
@@ -23,13 +24,13 @@ class _HomeState extends State<Home> {
   final controller = AccountController();
   String _searchQuery = "";
   String _filterQuery = "Time↓";
-  final List<String> _filterOptions = <String>["New","Time↓","Time↑"];
+  final List<String> _filterOptions = <String>["New", "Time↓", "Time↑"];
   AppUser? _currentUser;
 
   Future _getUser() async {
     AppUser? appUser = await AccountController().getCurrentUser();
 
-    if (appUser != null){
+    if (appUser != null) {
       setState(() {
         _currentUser = appUser;
       });
@@ -37,7 +38,7 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _getUser();
   }
@@ -48,11 +49,13 @@ class _HomeState extends State<Home> {
       initialData: null,
       value: EventController().events,
       child: Scaffold(
-        resizeToAvoidBottomInset : false,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           centerTitle: true,
-          title:
-              const FittedBox(fit: BoxFit.fitWidth, child: Text('HCMUS Lookout')),
+          title: const FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Text('HCMUS Lookout'),
+          ),
           backgroundColor: Theme.of(context).primaryColor,
           elevation: 0,
           actions: <Widget>[
@@ -71,34 +74,12 @@ class _HomeState extends State<Home> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Profile',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 14),
-                    Text(
-                      'Username',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'user@example.com', 
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
+                child: const Text(
+                  'Menu',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
                 ),
               ),
               ListTile(
@@ -106,18 +87,32 @@ class _HomeState extends State<Home> {
                 title: const Text('Profile'),
                 onTap: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const UserScreen(userName: "Faker")));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UserScreen(userName: "Faker"),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.calendar_today),
                 title: const Text('Calendar'),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Calendar()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Calendar()),
+                  );
+                },
+              ),
+              // Nút "MANAGE EVENTS" nằm giữa "Calendar" và "Settings"
+              ListTile(
+                leading: const Icon(Icons.event),
+                title: const Text('MANAGE EVENTS'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserEventsScreen()),
+                  );
                 },
               ),
               ListTile(
@@ -126,44 +121,11 @@ class _HomeState extends State<Home> {
                 onTap: () {},
               ),
               ListTile(
-                leading: const Icon(Icons.logout, color: Colors.red,),
-                title: const Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    color: Colors.red
-                  ),
-                ),
+                leading: const Icon(Icons.logout),
+                title: const Text('Sign Out'),
                 onTap: () {
-                  // Show confirmation dialog when sign out is tapped
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('Confirm Sign Out'),
-                        content: const Text('Are you sure you want to sign out?'),
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Text('Cancel'),
-                            onPressed: () {
-                              // Close the dialog and do nothing
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: const Text('Confirm'),
-                            onPressed: () {
-                              // Perform sign out action
-                              controller.signOut();
-                              // Close the dialog
-                              Navigator.of(context).pop();
-                              // Navigate to the WelcomeScreen
-                              Navigator.popAndPushNamed(context, WelcomeScreen.id);
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  controller.signOut();
+                  Navigator.popAndPushNamed(context, WelcomeScreen.id);
                 },
               ),
               Visibility(
@@ -172,8 +134,13 @@ class _HomeState extends State<Home> {
                   leading: const Icon(Icons.calendar_today),
                   title: const Text('Club Profile'),
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ProfileScreen(currentClub: _currentUser as Club,)));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProfileScreen(currentClub: _currentUser as Club),
+                      ),
+                    );
                   },
                 ),
               ),
@@ -228,7 +195,8 @@ class _HomeState extends State<Home> {
                         child: DropdownButton<String>(
                           value: _filterQuery,
                           icon: const Icon(Icons.filter_list),
-                          items: _filterOptions.map<DropdownMenuItem<String>>((String value) {
+                          items: _filterOptions
+                              .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(value),
@@ -245,25 +213,28 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              Expanded(child: EventList(searchQuery: _searchQuery, sortQuery: _filterQuery)),
+              Expanded(
+                child: EventList(
+                  searchQuery: _searchQuery,
+                  sortQuery: _filterQuery,
+                ),
+              ),
             ],
           ),
         ),
-        floatingActionButton: Visibility(
-          visible: true,
-          child: SizedBox(
-            height: 80,
-            width: 140,
-            child: FloatingActionButton(
-              backgroundColor: Colors.lightBlueAccent,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CreateEventScreen()),
-                );
-              },
-              child: const Text('Create Event'),
-            ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: SizedBox(
+          height: 80,
+          width: 140,
+          child: FloatingActionButton(
+            backgroundColor: Colors.lightBlueAccent,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateEventScreen()),
+              );
+            },
+            child: const Text('CREATE EVENT'),
           ),
         ),
       ),
