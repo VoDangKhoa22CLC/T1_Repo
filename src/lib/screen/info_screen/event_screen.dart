@@ -15,9 +15,10 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-  bool isSubscribed  = false;
+  bool isSubscribed = false;
   DateTime startDate = DateTime.now();
   final List<String> _urls = <String>["", "", ""];
+  bool isStudent = false;
 
   Future _loadImage(String inputURL, int index) async {
     final firebaseStorage = FirebaseStorage.instance.ref().child(inputURL);
@@ -38,10 +39,14 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   void _getSubscription() async {
-      Student? currentUser = (await AccountController().getCurrentUser()) as Student?;
-      setState(() {
-        isSubscribed = currentUser!.attendedEventIds!.contains(widget.myEvent.eventID);
-      });
+      AppUser? currentUser = (await AccountController().getCurrentUser());
+      if (currentUser is Student){
+        setState(() {
+          isSubscribed = currentUser.attendedEventIds!.contains(widget.myEvent.eventID);
+          isStudent = true;
+        });
+      }
+
   }
 
   @override
@@ -81,7 +86,7 @@ class _EventScreenState extends State<EventScreen> {
                     Container(
                       height: 250,
                       width: double.infinity,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('images/avatar_default.png'), 
                           fit: BoxFit.cover,
@@ -93,7 +98,7 @@ class _EventScreenState extends State<EventScreen> {
                       left: 10,
                       top: 40,
                       child: IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () {
                           Navigator.pop(context);
                         },
@@ -106,19 +111,19 @@ class _EventScreenState extends State<EventScreen> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          CircleAvatar(
+                          const CircleAvatar(
                             radius: 50,
                             backgroundImage: AssetImage('images/avatar_default.png'),
                           ),
-                          SizedBox(width: 16),
+                          const SizedBox(width: 16),
                           Column(
                             children: [
-                              SizedBox(height: 50), 
-                              Container(
+                              const SizedBox(height: 50),
+                              SizedBox(
                                 width: MediaQuery.of(context).size.width - 140,
                                 child: Text(
-                                  '${widget.myEvent.hostID}',
-                                  style: TextStyle(
+                                  widget.myEvent.hostID,
+                                  style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -129,13 +134,12 @@ class _EventScreenState extends State<EventScreen> {
                           ),
                         ],
                       ),
-                  
                     ),
                     
                   ],
                 ),
                 // Event details
-                SizedBox(height: 100),
+                const SizedBox(height: 100),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -152,7 +156,7 @@ class _EventScreenState extends State<EventScreen> {
                       const SizedBox(height: 8),
                       // Event datetime
                       Text(
-                        '${widget.myEvent.eventTime}',
+                        widget.myEvent.eventTime,
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
@@ -198,7 +202,7 @@ class _EventScreenState extends State<EventScreen> {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: _urls.map((url) => _buildPhoto(url)).toList(),
+                          children: _urls.where((url) => (url != "")).map((url) => _buildPhoto(url)).toList(),
                         ),
                       ),
                     ],
@@ -210,24 +214,27 @@ class _EventScreenState extends State<EventScreen> {
         ],
       ),
       // Subscribe button
-      bottomNavigationBar: GestureDetector(
-        onTap: _toggleSubscription, // Toggle subscription on tap
-        child: Container(
-          decoration: BoxDecoration(
-            color: isSubscribed ? Colors.grey : Colors.blue, // Change color based on state
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+      bottomNavigationBar: Visibility(
+        visible: isStudent,
+        child: GestureDetector(
+          onTap: _toggleSubscription, // Toggle subscription on tap
+          child: Container(
+            decoration: BoxDecoration(
+              color: isSubscribed ? Colors.grey : Colors.blue, // Change color based on state
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
             ),
-          ),
-          height: 60,
-          child: Center(
-            child: Text(
-              isSubscribed ? 'Unsubscribe' : 'Subscribe', // Change text based on state
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            height: 60,
+            child: Center(
+              child: Text(
+                isSubscribed ? 'Unsubscribe' : 'Subscribe', // Change text based on state
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

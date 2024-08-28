@@ -9,6 +9,8 @@ import 'package:lookout_dev/screen/welcome.dart';
 import 'package:lookout_dev/screen/info_screen/event_create.dart';
 import 'package:provider/provider.dart';
 
+import '../data/account_class.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
   static String id = 'home_screen';
@@ -20,8 +22,25 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final controller = AccountController();
   String _searchQuery = "";
-  String _filterQuery = "Q1";
-  final List<String> _filterOptions = <String>["Q1", "Q2", "Q3"];
+  String _filterQuery = "Time↓";
+  final List<String> _filterOptions = <String>["New","Time↓","Time↑"];
+  AppUser? _currentUser;
+
+  Future _getUser() async {
+    AppUser? appUser = await AccountController().getCurrentUser();
+
+    if (appUser != null){
+      setState(() {
+        _currentUser = appUser;
+      });
+    }
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    _getUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,19 +111,22 @@ class _HomeState extends State<Home> {
                   Navigator.popAndPushNamed(context, WelcomeScreen.id);
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.calendar_today),
-                title: const Text('club profile'),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfileScreen()));
-                },
+              Visibility(
+                visible: _currentUser is Club,
+                child: ListTile(
+                  leading: const Icon(Icons.calendar_today),
+                  title: const Text('Club Profile'),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ProfileScreen(currentClub: _currentUser as Club,)));
+                  },
+                ),
               ),
             ],
           ),
         ),
         body: Padding(
-          padding:  EdgeInsets.all(0.0),
+          padding: const EdgeInsets.all(0.0),
           child: Column(
             children: <Widget>[
               // Container for search bar and filter button with rounded bottom edges
@@ -168,17 +190,25 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              EventList(searchQuery: _searchQuery),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CreateEventScreen()),
-                  );
-                },
-                child: const Text('Create Event'),
-              ),
+              Expanded(child: EventList(searchQuery: _searchQuery, sortQuery: _filterQuery)),
             ],
+          ),
+        ),
+        floatingActionButton: Visibility(
+          visible: true,
+          child: SizedBox(
+            height: 80,
+            width: 140,
+            child: FloatingActionButton(
+              backgroundColor: Colors.lightBlueAccent,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateEventScreen()),
+                );
+              },
+              child: const Text('Create Event'),
+            ),
           ),
         ),
       ),

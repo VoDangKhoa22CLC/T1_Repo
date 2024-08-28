@@ -19,7 +19,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
   String _eventName = '';
   String _eventDescription = '';
-  DateTime _eventDate = DateTime.now();
+  DateTime _eventDate = DateTime.now().add(const Duration(days: 1));
   String _eventLocation = '';
   String _eventNotes = '';
   final EventController eventController = EventController();
@@ -95,8 +95,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               children: <Widget>[
                 // Enter event name
                 TextFormField(
-                  minLines: 1,
-                  maxLines: 2,
                   decoration: InputDecoration(labelText: 'Event Name'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -220,23 +218,21 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         )
                       ],
                     ),
-                    _pickedImage[2] != null ? Container(
-                      child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.file(File(_pickedImage[2]!.path!), width: 120, height: 120,),
-                            IconButton(
-                              onPressed: (){_unselectPicture(2);},
-                              icon: const Icon(Icons.motion_photos_off_outlined),
-                              color: Colors.white,
-                            ),
-                          ]
-                      ),
+                    _pickedImage[2] != null ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.file(File(_pickedImage[2]!.path!), width: 120, height: 120,),
+                          IconButton(
+                            onPressed: (){_unselectPicture(2);},
+                            icon: const Icon(Icons.motion_photos_off_outlined),
+                            color: Colors.white,
+                          ),
+                        ]
                     ) :
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        SizedBox(width: 120, height: 120),
+                        const SizedBox(width: 120, height: 120),
                         IconButton(
                           onPressed: (){_selectPicture(2);},
                           icon: const Icon(Icons.add_photo_alternate_outlined),

@@ -137,8 +137,9 @@ class EventController {
 
 class EventList extends StatefulWidget {
   final String searchQuery;
+  final String sortQuery;
 
-  const EventList({super.key, required this.searchQuery});
+  const EventList({super.key, required this.searchQuery, required this.sortQuery});
 
   @override
   State<EventList> createState() => _EventListState();
@@ -148,9 +149,17 @@ class _EventListState extends State<EventList> {
   @override
   Widget build(BuildContext context) {
     final events = Provider.of<List<EventClass>?>(context);
+    if (widget.sortQuery == "Time↓") {
+      events?.sort((a, b) => a.eventTime.compareTo(b.eventTime));
+    }
+    else if (widget.sortQuery == "Time↑"){
+      events?.sort((a, b) => b.eventTime.compareTo(a.eventTime));
+    }
+
     final filtered = events?.where((event) => event.eventName.contains(widget.searchQuery)).toList();
 
     ListView listView = ListView.builder(
+
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: events != null ? events.length : 0,
@@ -160,12 +169,12 @@ class _EventListState extends State<EventList> {
     );
 
     ListView filteredView = ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: filtered != null ? filtered.length : 0,
-        itemBuilder: (context, index){
-          return EventTile(myEvent: filtered![index]);
-        }
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: filtered != null ? filtered.length : 0,
+      itemBuilder: (context, index){
+        return EventTile(myEvent: filtered![index]);
+      }
     );
 
     return widget.searchQuery.isEmpty ? listView : filteredView;

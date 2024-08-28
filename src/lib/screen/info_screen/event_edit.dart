@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
@@ -40,10 +42,7 @@ class _EventEditScreenState extends State<EventEditScreen> {
         subscribers: thisEvent.subscribers,
       );
       // after creating, return to home or pop a noti
-      if (mounted){
-        Navigator.pop(context);
-        Navigator.pop(context);
-      }
+      // Navigator.pushNamed(context, routeName)
     }
   }
 
@@ -124,7 +123,7 @@ class _EventEditScreenState extends State<EventEditScreen> {
               const SizedBox(height: 20),
 
               ElevatedButton(
-                onPressed: _editEvent,
+                onPressed: (){_editEvent(); Navigator.pop(context); Navigator.pop(context);},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                 ),

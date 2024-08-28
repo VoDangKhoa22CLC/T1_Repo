@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lookout_dev/controller/account.dart';
@@ -40,21 +39,16 @@ class _CalendarState extends State {
 
   void _getEventsList() async{
     _eventsIds = (await AccountController().relatedEvents)!;
-    print(_eventsIds);
-    print("Im here");
     EventController eventController = EventController();
     Map<DateTime, List<EventTile>> eventTileMap = {};
     for (String eventID in _eventsIds){
       EventClass? thisEvent = await eventController.getEvent(eventID: eventID);
       if (thisEvent != null){
-        print(DateTime.parse(thisEvent.eventTime));
-        if (!eventTileMap.containsKey(DateTime.parse(thisEvent.eventTime))) {
+        if (!eventTileMap.containsKey(DateTime.parse("${thisEvent.eventTime}Z"))) {
           eventTileMap[DateTime.parse("${thisEvent.eventTime}Z")] = <EventTile>[EventTile(myEvent: thisEvent)];
-          print("Added");
         }
         else {
           eventTileMap[DateTime.parse("${thisEvent.eventTime}Z")]?.add(EventTile(myEvent: thisEvent));
-          print("Added 2");
         }
       }
     }
@@ -79,18 +73,18 @@ class _CalendarState extends State {
         centerTitle: true,
       ),
       //this button simply add a sample event to the current selected day, for testing.
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){ 
-          // setState(() {
-          //   if (!eventsAtDay.containsKey(_selectedDay)) {
-          //     eventsAtDay[_selectedDay!] = [];
-          //   }
-          //   eventsAtDay[_selectedDay!]!.add(EventTile(eventName: 'Event'));
-          //   _selectedEvents.value = _getEventsForDay(_selectedDay!);
-          // });
-        },
-        child: Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: (){
+      //     // setState(() {
+      //     //   if (!eventsAtDay.containsKey(_selectedDay)) {
+      //     //     eventsAtDay[_selectedDay!] = [];
+      //     //   }
+      //     //   eventsAtDay[_selectedDay!]!.add(EventTile(eventName: 'Event'));
+      //     //   _selectedEvents.value = _getEventsForDay(_selectedDay!);
+      //     // });
+      //   },
+      //   child: Icon(Icons.add),
+      // ),
       body: Column(
         children: [
           TableCalendar(

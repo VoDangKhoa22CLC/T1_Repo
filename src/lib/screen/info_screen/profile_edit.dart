@@ -38,18 +38,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   left: 10,
                   top: 40,
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white, // White background
                       shape: BoxShape.circle, // Circular shape
                     ),
                     child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.black), // Black icon
+                      icon: const Icon(Icons.arrow_back, color: Colors.black), // Black icon
                       onPressed: () {
                         Navigator.pop(context); // Pops out of the current screen
                       },
                     ),
                   ),
                 ),
+
                 // Avatar placeholder
                 Positioned(
                   top: 150,

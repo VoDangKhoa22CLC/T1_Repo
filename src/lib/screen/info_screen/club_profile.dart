@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:lookout_dev/screen/editprofile.dart';
-void main() {
+import 'package:lookout_dev/controller/account.dart';
+import 'package:lookout_dev/data/account_class.dart';
+import 'package:lookout_dev/screen/info_screen/profile_edit.dart';
+
+void main() async{
+  AppUser? curU = await AccountController().getCurrentUser();
   runApp(MaterialApp(
-    home: ProfileScreen(),
+    home: ProfileScreen(currentClub: curU as Club),
   ));
 }
 
 class ProfileScreen extends StatelessWidget {
+
+  final Club currentClub;
+  const ProfileScreen({super.key, required this.currentClub});
+
+
+  Widget _buildNetworkPhoto(String imageUrl) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(
+          imageUrl,
+          width: 100,
+          height: 100,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,9 +45,9 @@ class ProfileScreen extends StatelessWidget {
                 // Background image
                 Container(
                   height: 200,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('images/avatar_default.png'), 
+                      image: AssetImage('images/avatar_default.png'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -33,69 +57,70 @@ class ProfileScreen extends StatelessWidget {
                   left: 10,
                   top: 40,
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white, // White background
                       shape: BoxShape.circle, // Circular shape
                     ),
                     child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.black), // Black icon
+                      icon: const Icon(Icons.arrow_back, color: Colors.black), // Black icon
                       onPressed: () {
                         Navigator.pop(context); // Pops out of the current screen
                       },
                     ),
                   ),
                 ),
+
                 // Avatar
                 Positioned(
                   top: 150, // Adjust the overlap by changing the top value
                   left: MediaQuery.of(context).size.width / 2 - 50,
                   child: CircleAvatar(
                     radius: 60,
-                    backgroundImage: AssetImage('images/avatar_default.png'),
+                    backgroundImage: currentClub.profilePicture != "" ? _buildNetworkPhoto(currentClub.profilePicture) as ImageProvider : const AssetImage("images/avatar_default.png") as ImageProvider,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 60), // Space to account for avatar overlap
+            const SizedBox(height: 60), // Space to account for avatar overlap
             // Club name
             Text(
-              'SAB Entertainment & Arts',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              currentClub.name,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             // Email with icon
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.email, color: Colors.grey),
-                SizedBox(width: 8),
-                Text('sab@fit.hcmus.edu.vn'),
+                const Icon(Icons.email, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(currentClub.email),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             // Location with icon
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.location_on, color: Colors.grey),
-                SizedBox(width: 8),
-                Text('sab@fit.hcmus.edu.vn'),
+                const Icon(Icons.location_on, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(currentClub.email),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Introduction section
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Introduction',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    'Fanpage chính thức của Ban Entertainment & Arts trực thuộc SAB.📌 Follow fanpage SAB: fb.com/sab.ctda',
+                    currentClub.description!,
                     textAlign: TextAlign.left,
                   ),
                 ],
@@ -107,33 +132,31 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Photos',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: [
-                        _buildPhoto('images/avatar_default.png'), 
-                        _buildPhoto('images/avatar_default.png'),
-                        _buildPhoto('images/avatar_default.png'),
-                      ],
+                      children: <String>[
+                        currentClub.profileImage1,currentClub.profileImage2,currentClub.profileImage3,
+                      ].where((url) => (url != "")).map((url) => _buildNetworkPhoto(url)).toList(),
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                  MaterialPageRoute(builder: (context) => const EditProfileScreen()),
                 );
               },
-              child: Text('Edit Profile', style: TextStyle(fontSize: 16)),
+              child: const Text('Edit Profile', style: TextStyle(fontSize: 16)),
             ),
           ],
         ),
