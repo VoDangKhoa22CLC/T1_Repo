@@ -104,43 +104,69 @@ class _HomeState extends State<Home> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding:  EdgeInsets.all(0.0),
           child: Column(
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextFormField(
-                      onChanged: (value) {
-                        setState(() {
-                          _searchQuery = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Search',
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+              // Container for search bar and filter button with rounded bottom edges
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor, // Same color as the app bar
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(16.0),
+                    bottomRight: Radius.circular(16.0),
+                  ),
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: <Widget>[
+                    // Search bar
+                    Expanded(
+                      child: TextFormField(
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Search',
+                          fillColor: Colors.white,
+                          filled: true, // To make sure the input field has a white background
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(60.0),
+                            borderSide: BorderSide.none, // No border to blend with the container
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  DropdownButton(
-                    value: null,
-                    icon: const Icon(Icons.filter_list),
-                    items: _filterOptions.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (value){
-                      setState(() {
-                        _filterQuery = value!;
-                      });
-                    }
-                  )
-                ],
+                    const SizedBox(width: 8.0), // Space between the search bar and dropdown
+                    // Filter button
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white, // White background for the dropdown
+                        borderRadius: BorderRadius.circular(60.0),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _filterQuery,
+                          icon: const Icon(Icons.filter_list),
+                          items: _filterOptions.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _filterQuery = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               EventList(searchQuery: _searchQuery),
               ElevatedButton(

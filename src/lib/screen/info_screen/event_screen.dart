@@ -112,25 +112,30 @@ class _EventScreenState extends State<EventScreen> {
                           ),
                           SizedBox(width: 16),
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: 40), 
-                              Text(
-                                widget.myEvent.hostID,
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
+                              SizedBox(height: 50), 
+                              Container(
+                                width: MediaQuery.of(context).size.width - 140,
+                                child: Text(
+                                  '${widget.myEvent.hostID}',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  softWrap: true,
                                 ),
                               ),
                             ],
                           ),
                         ],
                       ),
+                  
                     ),
+                    
                   ],
                 ),
                 // Event details
-                const SizedBox(height: 50),
+                SizedBox(height: 100),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
