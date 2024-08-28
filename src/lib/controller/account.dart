@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:lookout_dev/data/user_class.dart';
+import 'package:lookout_dev/data/account_class.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 const List<String> scopes = <String>[
@@ -46,7 +46,11 @@ class AccountController {
             uid: user.uid,
             email: email,
             name: name,
-            //profilePicture: await AppUser.loadDefaultProfilePicture(),
+            profilePicture: "",
+            profileImage1: "",
+            profileImage2: "",
+            profileImage3: "",
+            verified: "false"
           );
         }
         await _firestore.doc(user.uid).set(appUser.toMap());
@@ -238,6 +242,82 @@ class AccountController {
       }
     }
     return null;
+  }
+
+  Future<List<String>?> get relatedEvents async {
+    AppUser? thisUser = await getCurrentUser();
+    if (thisUser == null) {
+      return [];
+    }
+
+    if (thisUser is Student){
+      return thisUser.attendedEventIds;
+    }
+    else if (thisUser is Club){
+      return thisUser.hostedEventIds;
+    }
+
+    return [];
+  }
+
+  Future appendEvents(String eventID) async {
+    AppUser? thisUser = await getCurrentUser();
+    if (thisUser == null) {
+      return [];
+    }
+
+    DocumentSnapshot doc = await _firestore.doc(thisUser.uid).get();
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    List<String> evList = [];
+    String field = "";
+
+    if (thisUser is Student){
+      field = "attendedEventIds";
+      DocumentSnapshot thisEvent = await FirebaseFirestore.instance.collection('events').doc(eventID).get();
+      Map<String, dynamic> thisEventData = thisEvent.data() as Map<String, dynamic>;
+      FirebaseFirestore.instance.collection('events').doc(eventID).set({"subscribers" : thisEventData["subscribers"] + 1}, SetOptions(merge: true));
+    }
+    else if (thisUser is Club){
+      field = "hostedEventIds";
+    }
+
+    if (field != ""){
+      List<String> evList = List<String>.from(data[field] as List);
+      if (evList.contains(eventID) == false) {
+        evList.add(eventID);
+        _firestore.doc(thisUser.uid).set({field : evList}, SetOptions(merge: true));
+      }
+    }
+
+  }
+
+  Future removeEvents(String eventID) async {
+    AppUser? thisUser = await getCurrentUser();
+    if (thisUser == null) {
+      return [];
+    }
+
+    DocumentSnapshot doc = await _firestore.doc(thisUser.uid).get();
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    List<String> evList = [];
+    String field = "";
+
+    if (thisUser is Student){
+      field = "attendedEventIds";
+      DocumentSnapshot thisEvent = await FirebaseFirestore.instance.collection('events').doc(eventID).get();
+      Map<String, dynamic> thisEventData = thisEvent.data() as Map<String, dynamic>;
+      FirebaseFirestore.instance.collection('events').doc(eventID).set({"subscribers" : thisEventData["subscribers"] - 1}, SetOptions(merge: true));
+    }
+    else if (thisUser is Club){
+      field = "hostedEventIds";
+    }
+
+    if (field != ""){
+      List<String> evList = List<String>.from(data[field] as List);
+      evList.remove(eventID);
+      _firestore.doc(thisUser.uid).set({field : evList}, SetOptions(merge: true));
+    }
+
   }
 
   final CollectionReference _adminCollection =

@@ -5,7 +5,7 @@ import 'welcome.dart';
 import 'login.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:lookout_dev/controller/account.dart';
-import 'package:lookout_dev/data/user_class.dart';
+import 'package:lookout_dev/data/account_class.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
 class SignUpScreen extends StatefulWidget {

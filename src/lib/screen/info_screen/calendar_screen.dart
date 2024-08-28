@@ -2,6 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:lookout_dev/controller/account.dart';
+import 'package:lookout_dev/controller/event.dart';
+import 'package:lookout_dev/data/event_class.dart';
+import 'package:lookout_dev/data/account_class.dart';
 import 'package:lookout_dev/screen/info_screen/credits.dart';
 import 'package:lookout_dev/template/event_tile.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -15,6 +19,7 @@ class _CalendarState extends State {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  List<String> _eventsIds = [];
   Map<DateTime, List<EventTile>> eventsAtDay = {};
   late final ValueNotifier<List<EventTile>> _selectedEvents;
 
@@ -32,17 +37,45 @@ class _CalendarState extends State {
   //     });
   //   }
   // }
+
+  void _getEventsList() async{
+    _eventsIds = (await AccountController().relatedEvents)!;
+    print(_eventsIds);
+    print("Im here");
+    EventController eventController = EventController();
+    Map<DateTime, List<EventTile>> eventTileMap = {};
+    for (String eventID in _eventsIds){
+      EventClass? thisEvent = await eventController.getEvent(eventID: eventID);
+      if (thisEvent != null){
+        print(DateTime.parse(thisEvent.eventTime));
+        if (!eventTileMap.containsKey(DateTime.parse(thisEvent.eventTime))) {
+          eventTileMap[DateTime.parse("${thisEvent.eventTime}Z")] = <EventTile>[EventTile(myEvent: thisEvent)];
+          print("Added");
+        }
+        else {
+          eventTileMap[DateTime.parse("${thisEvent.eventTime}Z")]?.add(EventTile(myEvent: thisEvent));
+          print("Added 2");
+        }
+      }
+    }
+    setState(() {
+      eventsAtDay = eventTileMap;
+    });
+  }
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    _getEventsList();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset : false,
       appBar: AppBar(
-        title: Text('Calendar'),
+        title: const Text('Calendar'),
         centerTitle: true,
       ),
       //this button simply add a sample event to the current selected day, for testing.
@@ -61,8 +94,8 @@ class _CalendarState extends State {
       body: Column(
         children: [
           TableCalendar(
-            firstDay: DateTime.utc(2010, 10, 20),
-            lastDay: DateTime.utc(2040, 10, 20),
+            firstDay: DateTime(2010, 10, 20),
+            lastDay: DateTime(2040, 10, 20),
             focusedDay: _focusedDay,
             calendarFormat: _calendarFormat,
             selectedDayPredicate: (day) {

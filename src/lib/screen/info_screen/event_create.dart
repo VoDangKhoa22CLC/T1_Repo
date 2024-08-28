@@ -1,10 +1,12 @@
-// TODO Implement this library.import 'dart:io';
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/controller/event.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:lookout_dev/data/account_class.dart';
+
+import '../../data/event_class.dart';
 
 class CreateEventScreen extends StatefulWidget {
   static const String id = 'create_event_screen';
@@ -39,23 +41,25 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     });
   }
 
-  void _createEvent() {
+  void _createEvent() async {
     if (_formKey.currentState!.validate()) {
+       AppUser? currentUser = await AccountController().getCurrentUser();
       _formKey.currentState!.save();
       // create event riel here
-      eventController.createEvent(
+      EventClass ev = eventController.createEvent(
         eventName: _eventName,
         eventTime: _eventDate.toString(),
         eventLocation: _eventLocation,
         eventShortDescription: _eventNotes,
         eventLongDescription: _eventDescription,
-        hostID: "admin",
+        hostID: currentUser!.uid,
         img1: _pickedImage[0],
         img2: _pickedImage[1],
         img3: _pickedImage[2],
-      );
+      ) as EventClass;
+      AccountController().appendEvents(ev.eventID);
       // after creating, return to home or pop a noti
-      Navigator.pop(context);
+      if (context.mounted) Navigator.of(context).pop();
     }
   }
 
@@ -76,6 +80,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset : false,
       appBar: AppBar(
         title: Text('Create Event'),
         backgroundColor: Theme.of(context).primaryColor,

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/event_edit.dart';
+
+import '../../data/account_class.dart';
 
 class EventScreen extends StatefulWidget {
   final EventClass myEvent;
@@ -23,15 +26,22 @@ class _EventScreenState extends State<EventScreen> {
       _urls[index] = url;
     });
   }
-  void _toggleSubscription() {
+  void _toggleSubscription() async {
     setState(() {
       isSubscribed = !isSubscribed; // Toggle state
     });
     if (isSubscribed) {
-      // Handle subscribe action here
+      await AccountController().appendEvents(widget.myEvent.eventID);
     } else {
-      // Handle unsubscribe action here
+      await AccountController().removeEvents(widget.myEvent.eventID);
     }
+  }
+
+  void _getSubscription() async {
+      Student? currentUser = (await AccountController().getCurrentUser()) as Student?;
+      setState(() {
+        isSubscribed = currentUser!.attendedEventIds!.contains(widget.myEvent.eventID);
+      });
   }
 
   @override
@@ -53,6 +63,7 @@ class _EventScreenState extends State<EventScreen> {
         _loadImage(widget.myEvent.eventImage3, 2);
       });
     }
+    _getSubscription();
   }
 
   @override

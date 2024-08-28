@@ -8,7 +8,6 @@ class AppUser {
   final String email;
   final String name;
   final UserType userType;
-  //final Uint8List? profilePicture;
 
   AppUser({
     required this.uid,
@@ -89,21 +88,38 @@ class Student extends AppUser {
 class Club extends AppUser {
   final String? description;
   final List<String>? hostedEventIds;
+  final String profilePicture;
+  final String profileImage1;
+  final String profileImage2;
+  final String profileImage3;
+  final String verified;
+
 
   Club(
-      {required super.uid,
-      required super.email,
-      required super.name,
-      //super.profilePicture,
-      this.description = '',
-      this.hostedEventIds = const []})
-      : super(userType: UserType.Club);
+    {required super.uid,
+    required super.email,
+    required super.name,
+    this.description = '',
+    this.hostedEventIds = const [],
+    required this.profilePicture,
+    required this.profileImage1,
+    required this.profileImage2,
+    required this.profileImage3,
+    required this.verified,
+    })
+    : super(userType: UserType.Club);
 
   @override
   Map<String, dynamic> toMap() {
     final map = super.toMap();
     map.addAll({
       'description': description,
+      'profilePicture': profilePicture,
+      'profileImage1': profileImage1,
+      'profileImage2': profileImage2,
+      'profileImage3': profileImage3,
+      'verified': verified,
+      'hostedEventsIds': hostedEventIds
     });
     return map;
   }
@@ -114,7 +130,11 @@ class Club extends AppUser {
       email: map['email'],
       name: map['name'],
       description: map['description'],
-      //profilePicture: map['profile_picture'],
+      profilePicture: map['profilePicture'],
+      profileImage1: map['profileImage1'],
+      profileImage2: map['profileImage2'],
+      profileImage3: map['profileImage3'],
+      verified: map['verified'],
       hostedEventIds: List<String>.from(map['hostedEventIds'] ?? []),
     );
   }

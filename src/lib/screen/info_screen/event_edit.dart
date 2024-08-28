@@ -21,10 +21,11 @@ class _EventEditScreenState extends State<EventEditScreen> {
   String _eventNotes = '';
   final EventController eventController = EventController();
 
-  void _editEvent() {
+  void _editEvent() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       // create event riel here
+      EventClass? thisEvent = await EventController().getEvent(eventID: widget.myEvent.eventID);
       eventController.editEvent(
         eventID: widget.myEvent.eventID,
         eventName: _eventName,
@@ -32,14 +33,17 @@ class _EventEditScreenState extends State<EventEditScreen> {
         eventLocation: _eventLocation,
         eventShortDescription: _eventNotes,
         eventLongDescription: _eventDescription,
-        hostID: "admin",
+        hostID: thisEvent!.hostID,
         img1: widget.myEvent.eventImage1,
         img2: widget.myEvent.eventImage2,
-        img3: widget.myEvent.eventImage3
+        img3: widget.myEvent.eventImage3,
+        subscribers: thisEvent.subscribers,
       );
       // after creating, return to home or pop a noti
-      Navigator.pop(context);
-      Navigator.pop(context);
+      if (mounted){
+        Navigator.pop(context);
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -61,7 +65,7 @@ class _EventEditScreenState extends State<EventEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Event'),
+        title: const Text('Edit Event'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Padding(
@@ -73,7 +77,7 @@ class _EventEditScreenState extends State<EventEditScreen> {
             children: <Widget>[
               TextFormField(
                 initialValue: widget.myEvent.eventName,
-                decoration: InputDecoration(labelText: 'Event Name'),
+                decoration: const InputDecoration(labelText: 'Event Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter an event name';

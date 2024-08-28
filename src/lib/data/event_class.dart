@@ -9,6 +9,7 @@ class EventClass{
   final String eventImage1;
   final String eventImage2;
   final String eventImage3;
+  final int subscribers;
 
   EventClass({
     required this.eventID,
@@ -21,6 +22,7 @@ class EventClass{
     required this.eventImage1,
     required this.eventImage2,
     required this.eventImage3,
+    this.subscribers = 0,
   });
 
 
@@ -36,7 +38,8 @@ class EventClass{
       'eventLongDescription': eventLongDescription,
       'eventImage1': eventImage1,
       'eventImage2': eventImage2,
-      'eventImage3': eventImage3
+      'eventImage3': eventImage3,
+      'subscribers': subscribers,
     };
   }
 
@@ -52,6 +55,7 @@ class EventClass{
       eventImage1: map['eventImage1'],
       eventImage2: map['eventImage2'],
       eventImage3: map['eventImage3'],
+      subscribers: map['subscribers']
     );
   }
 }

@@ -29,6 +29,7 @@ class _HomeState extends State<Home> {
       initialData: null,
       value: EventController().events,
       child: Scaffold(
+        resizeToAvoidBottomInset : false,
         appBar: AppBar(
           centerTitle: true,
           title:

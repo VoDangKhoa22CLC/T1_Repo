@@ -37,7 +37,8 @@ class EventController {
       eventLongDescription: eventLongDescription,
       eventImage1: path1,
       eventImage2: path2,
-      eventImage3: path3
+      eventImage3: path3,
+      subscribers: 0
     );
 
     DocumentReference docRef = await _firestore.add(event.toMap());
@@ -80,7 +81,8 @@ class EventController {
     required String hostID,
     required String img1,
     required String img2,
-    required String img3
+    required String img3,
+    required int subscribers,
   }) async {
     EventClass event = EventClass(
       eventID: eventID,
@@ -92,7 +94,8 @@ class EventController {
       eventLongDescription: eventLongDescription,
       eventImage1: img1,
       eventImage2: img2,
-      eventImage3: img3
+      eventImage3: img3,
+      subscribers: subscribers,
     );
 
     await _firestore.doc(eventID).set(event.toMap());
@@ -121,6 +124,7 @@ class EventController {
         eventImage1: e.get('eventImage1'),
         eventImage2: e.get('eventImage2'),
         eventImage3: e.get('eventImage3'),
+        subscribers: e.get('subscribers')
       );
     }).toList();
   }
@@ -167,5 +171,6 @@ class _EventListState extends State<EventList> {
     return widget.searchQuery.isEmpty ? listView : filteredView;
   }
 }
+
 
 
