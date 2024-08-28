@@ -71,12 +71,34 @@ class _HomeState extends State<Home> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                 ),
-                child: const Text(
-                  'Menu',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Profile',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 14),
+                    Text(
+                      'Username',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'user@example.com', 
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               ListTile(
@@ -104,11 +126,44 @@ class _HomeState extends State<Home> {
                 onTap: () {},
               ),
               ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Sign Out'),
+                leading: const Icon(Icons.logout, color: Colors.red,),
+                title: const Text(
+                  'Sign Out',
+                  style: TextStyle(
+                    color: Colors.red
+                  ),
+                ),
                 onTap: () {
-                  controller.signOut();
-                  Navigator.popAndPushNamed(context, WelcomeScreen.id);
+                  // Show confirmation dialog when sign out is tapped
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Confirm Sign Out'),
+                        content: const Text('Are you sure you want to sign out?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Cancel'),
+                            onPressed: () {
+                              // Close the dialog and do nothing
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Confirm'),
+                            onPressed: () {
+                              // Perform sign out action
+                              controller.signOut();
+                              // Close the dialog
+                              Navigator.of(context).pop();
+                              // Navigate to the WelcomeScreen
+                              Navigator.popAndPushNamed(context, WelcomeScreen.id);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
               Visibility(
