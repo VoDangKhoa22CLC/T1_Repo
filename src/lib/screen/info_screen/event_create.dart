@@ -95,6 +95,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               children: <Widget>[
                 // Enter event name
                 TextFormField(
+                  minLines: 1,
+                  maxLines: 2,
                   decoration: InputDecoration(labelText: 'Event Name'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -106,21 +108,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     _eventName = value!;
                   },
                 ),
-                // Enter event description
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Event Description'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an event description';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _eventDescription = value!;
-                  },
-                ),
                 // Enter event location
                 TextFormField(
+                  minLines: 1,
+                  maxLines: 2,
                   decoration: InputDecoration(labelText: 'Event Location'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -132,25 +123,52 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     _eventLocation = value!;
                   },
                 ),
+                // Enter event description
+                TextFormField(
+                  minLines: 1,
+                  maxLines: 4,
+                  decoration: InputDecoration(labelText: 'Event Description'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an event description';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _eventDescription = value!;
+                  },
+                ),
                 // Enter event notes
                 TextFormField(
+                  minLines: 1,
+                  maxLines: 2,
                   decoration: InputDecoration(labelText: 'Event Notes'),
                   onSaved: (value) {
                     _eventNotes = value!;
                   },
                 ),
                 // Select Date
-                TextField(
-                  focusNode: FocusNode(canRequestFocus: false),
+                TextFormField(
+                  controller: TextEditingController(text: _eventDate.toLocal().toString().split(' ')[0]),
                   decoration: InputDecoration(
-                    labelText: _eventDate == null
-                          ? 'Select Date'
-                          : 'Date: ' + _eventDate!.toLocal().toString().split(' ')[0],
+                    labelText: 'Date',
                     suffixIcon: IconButton(
                       icon: Icon(Icons.calendar_today),
                       onPressed: () => _selectDate(context),
                     ),
-                  )
+                  ),
+                  validator: (value) {
+                    if (value != null) {
+                      String year = value.split('-')[0];
+                      String month = value.split('-')[1];
+                      String day = value.split('-')[2];
+                      if ((int.parse(year) < DateTime.now().year) ||
+                          (int.parse(year) == DateTime.now().year && int.parse(month) < DateTime.now().month) ||
+                          (int.parse(year) == DateTime.now().year && int.parse(month) == DateTime.now().month && int.parse(day) < DateTime.now().day)
+                          )
+                        return 'Please enter a valid date';
+                    }
+                  },
                 ),
                 // SizedBox(height: 20),
                 // Row(
