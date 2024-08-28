@@ -125,7 +125,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         onChanged: (value) => _name = value,
                                         validator: (value) => value!.isEmpty
                                             ? 'Please enter a name'
-                                            : null, // Can replace with a function here
+                                            : null,
                                       ),
                                       buildInputField(
                                         hintText: 'Email',
