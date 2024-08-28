@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lookout_dev/screen/home.dart';
 import 'components.dart';
 import 'welcome.dart';
 import 'login.dart';

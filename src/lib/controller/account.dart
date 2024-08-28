@@ -43,15 +43,14 @@ class AccountController {
           );
         } else {
           appUser = Club(
-            uid: user.uid,
-            email: email,
-            name: name,
-            profilePicture: "",
-            profileImage1: "",
-            profileImage2: "",
-            profileImage3: "",
-            verified: "false"
-          );
+              uid: user.uid,
+              email: email,
+              name: name,
+              profilePicture: "",
+              profileImage1: "",
+              profileImage2: "",
+              profileImage3: "",
+              verified: "false");
         }
         await _firestore.doc(user.uid).set(appUser.toMap());
         return (appUser, null);
@@ -197,23 +196,14 @@ class AccountController {
         DocumentSnapshot doc = await _firestore.doc(user.uid).get();
 
         if (!doc.exists) {
-          // If the user doesn't exist, create a new user in Firestore
-          AppUser appUser = Student(
-            uid: user.uid,
-            email: user.email!,
-            name: user.displayName ?? '',
-            //profilePicture: await AppUser.loadDefaultProfilePicture(),
-          );
-          await _firestore.doc(user.uid).set(appUser.toMap());
-          return (appUser, null);
+          return (null, 'Account with this email does not exist');
+        }
+
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        if (data['userType'] == UserType.Student.toString()) {
+          return (Student.fromMap(data), null);
         } else {
-          // If the user exists, return the existing user data
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          if (data['userType'] == UserType.Student.toString()) {
-            return (Student.fromMap(data), null);
-          } else {
-            return (Club.fromMap(data), null);
-          }
+          return (Club.fromMap(data), null);
         }
       }
     } catch (e) {
@@ -250,10 +240,9 @@ class AccountController {
       return [];
     }
 
-    if (thisUser is Student){
+    if (thisUser is Student) {
       return thisUser.attendedEventIds;
-    }
-    else if (thisUser is Club){
+    } else if (thisUser is Club) {
       return thisUser.hostedEventIds;
     }
 
@@ -271,24 +260,30 @@ class AccountController {
     List<String> evList = [];
     String field = "";
 
-    if (thisUser is Student){
+    if (thisUser is Student) {
       field = "attendedEventIds";
-      DocumentSnapshot thisEvent = await FirebaseFirestore.instance.collection('events').doc(eventID).get();
-      Map<String, dynamic> thisEventData = thisEvent.data() as Map<String, dynamic>;
-      FirebaseFirestore.instance.collection('events').doc(eventID).set({"subscribers" : thisEventData["subscribers"] + 1}, SetOptions(merge: true));
-    }
-    else if (thisUser is Club){
+      DocumentSnapshot thisEvent = await FirebaseFirestore.instance
+          .collection('events')
+          .doc(eventID)
+          .get();
+      Map<String, dynamic> thisEventData =
+          thisEvent.data() as Map<String, dynamic>;
+      FirebaseFirestore.instance.collection('events').doc(eventID).set(
+          {"subscribers": thisEventData["subscribers"] + 1},
+          SetOptions(merge: true));
+    } else if (thisUser is Club) {
       field = "hostedEventIds";
     }
 
-    if (field != ""){
+    if (field != "") {
       List<String> evList = List<String>.from(data[field] as List);
       if (evList.contains(eventID) == false) {
         evList.add(eventID);
-        _firestore.doc(thisUser.uid).set({field : evList}, SetOptions(merge: true));
+        _firestore
+            .doc(thisUser.uid)
+            .set({field: evList}, SetOptions(merge: true));
       }
     }
-
   }
 
   Future removeEvents(String eventID) async {
@@ -302,22 +297,28 @@ class AccountController {
     List<String> evList = [];
     String field = "";
 
-    if (thisUser is Student){
+    if (thisUser is Student) {
       field = "attendedEventIds";
-      DocumentSnapshot thisEvent = await FirebaseFirestore.instance.collection('events').doc(eventID).get();
-      Map<String, dynamic> thisEventData = thisEvent.data() as Map<String, dynamic>;
-      FirebaseFirestore.instance.collection('events').doc(eventID).set({"subscribers" : thisEventData["subscribers"] - 1}, SetOptions(merge: true));
-    }
-    else if (thisUser is Club){
+      DocumentSnapshot thisEvent = await FirebaseFirestore.instance
+          .collection('events')
+          .doc(eventID)
+          .get();
+      Map<String, dynamic> thisEventData =
+          thisEvent.data() as Map<String, dynamic>;
+      FirebaseFirestore.instance.collection('events').doc(eventID).set(
+          {"subscribers": thisEventData["subscribers"] - 1},
+          SetOptions(merge: true));
+    } else if (thisUser is Club) {
       field = "hostedEventIds";
     }
 
-    if (field != ""){
+    if (field != "") {
       List<String> evList = List<String>.from(data[field] as List);
       evList.remove(eventID);
-      _firestore.doc(thisUser.uid).set({field : evList}, SetOptions(merge: true));
+      _firestore
+          .doc(thisUser.uid)
+          .set({field: evList}, SetOptions(merge: true));
     }
-
   }
 
   final CollectionReference _adminCollection =
