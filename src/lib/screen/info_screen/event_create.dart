@@ -77,6 +77,35 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     }
   }
 
+    Widget _textForm(int minlines, int maxlines, String labelText, String errorPrompt) {
+      return TextFormField(
+        minLines: minlines,
+        maxLines: maxlines,
+        cursorColor: Theme.of(context).primaryColor,
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: const TextStyle(color: Colors.black87),
+          filled: true,
+          fillColor: Colors.blue[50],
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor)
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor)
+          ),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return errorPrompt;
+          }
+          return null;
+        },
+        onSaved: (value) {
+          _eventName = value!;
+        },
+      );
+    }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,66 +120,35 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 // Enter event name
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Event Name'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an event name';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _eventName = value!;
-                  },
-                ),
+                _textForm(1, 2, 'Event Name', 'Please enter event name.'),
+                const SizedBox(height: 10),
                 // Enter event location
-                TextFormField(
-                  minLines: 1,
-                  maxLines: 2,
-                  decoration: InputDecoration(labelText: 'Event Location'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter event location';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _eventLocation = value!;
-                  },
-                ),
+                _textForm(1, 2, 'Event Location', 'Please enter event location.'),
+                const SizedBox(height: 10),
                 // Enter event description
-                TextFormField(
-                  minLines: 1,
-                  maxLines: 4,
-                  decoration: InputDecoration(labelText: 'Event Description'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an event description';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _eventDescription = value!;
-                  },
-                ),
+                _textForm(1, 4, 'Event Description', 'Please enter an event description'),
+                const SizedBox(height: 10),
                 // Enter event notes
-                TextFormField(
-                  minLines: 1,
-                  maxLines: 2,
-                  decoration: InputDecoration(labelText: 'Event Notes'),
-                  onSaved: (value) {
-                    _eventNotes = value!;
-                  },
-                ),
+                _textForm(1, 2, 'Event Notes', ' '),
+                const SizedBox(height: 10),
                 // Select Date
                 TextFormField(
                   controller: TextEditingController(text: _eventDate.toLocal().toString().split(' ')[0]),
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Date',
+                    labelText: 'Event Date',
+                    labelStyle: const TextStyle(color: Colors.black87),
+                    filled: true,
+                    fillColor: Colors.blue[50],
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor)
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor)
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(Icons.calendar_today),
                       onPressed: () => _selectDate(context),
@@ -172,9 +170,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 ),
                 // Add image section
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    _pickedImage[0] != null ? Container(
+                    _pickedImage[0] != null ? Flexible(
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -187,69 +185,79 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         ]
                       ),
                     ) :
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(width: 120, height: 120),
-                        IconButton(
-                          onPressed: (){_selectPicture(0);},
-                          icon: const Icon(Icons.add_photo_alternate_outlined),
-                        )
-                      ],
-                    ),
-                    _pickedImage[1] != null ? Stack(
+                    Flexible(
+                      child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          Image.file(File(_pickedImage[1]!.path!), width: 120, height: 120,),
+                          SizedBox(width: 120, height: 120),
                           IconButton(
-                            onPressed: (){_unselectPicture(1);},
-                            icon: const Icon(Icons.motion_photos_off_outlined),
-                            color: Colors.white,
-                          ),
-                        ]
-                    ) :
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(width: 120, height: 120),
-                        IconButton(
-                          onPressed: (){_selectPicture(1);},
-                          icon: const Icon(Icons.add_photo_alternate_outlined),
-                        )
-                      ],
+                            onPressed: (){_selectPicture(0);},
+                            icon: const Icon(Icons.add_photo_alternate_outlined),
+                          )
+                        ],
+                      ),
                     ),
-                    _pickedImage[2] != null ? Stack(
+                    _pickedImage[1] != null ? Flexible(
+                      child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.file(File(_pickedImage[1]!.path!), width: 120, height: 120,),
+                            IconButton(
+                              onPressed: (){_unselectPicture(1);},
+                              icon: const Icon(Icons.motion_photos_off_outlined),
+                              color: Colors.white,
+                            ),
+                          ]
+                      ),
+                    ) :
+                    Flexible(
+                      child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          Image.file(File(_pickedImage[2]!.path!), width: 120, height: 120,),
+                          SizedBox(width: 120, height: 120),
                           IconButton(
-                            onPressed: (){_unselectPicture(2);},
-                            icon: const Icon(Icons.motion_photos_off_outlined),
-                            color: Colors.white,
-                          ),
-                        ]
+                            onPressed: (){_selectPicture(1);},
+                            icon: const Icon(Icons.add_photo_alternate_outlined),
+                          )
+                        ],
+                      ),
+                    ),
+                    _pickedImage[2] != null ? Flexible(
+                      child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.file(File(_pickedImage[2]!.path!), width: 120, height: 120,),
+                            IconButton(
+                              onPressed: (){_unselectPicture(2);},
+                              icon: const Icon(Icons.motion_photos_off_outlined),
+                              color: Colors.white,
+                            ),
+                          ]
+                      ),
                     ) :
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        const SizedBox(width: 120, height: 120),
-                        IconButton(
-                          onPressed: (){_selectPicture(2);},
-                          icon: const Icon(Icons.add_photo_alternate_outlined),
-                        )
-                      ],
+                    Flexible(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          const SizedBox(width: 120, height: 120),
+                          IconButton(
+                            onPressed: (){_selectPicture(2);},
+                            icon: const Icon(Icons.add_photo_alternate_outlined),
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: _createEvent,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   child: const Text(
-                    'Create Event', 
-                    style: TextStyle(color: Colors.white), 
+                    'Create Event',
+                    style: TextStyle(color: Colors.black87), 
                   ),
                 ),
               ],
