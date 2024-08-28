@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'notification_configure/notification.dart';
 import 'package:lookout_dev/screen/info_screen/event_create.dart';
+import 'package:lookout_dev/screen/info_screen/setting.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +46,6 @@ class MyApp extends StatelessWidget {
   final String initialRoute;
   const MyApp({super.key, required this.initialRoute});
 
-
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
@@ -66,12 +66,14 @@ class MyApp extends StatelessWidget {
         SignUpScreen.id: (context) => const SignUpScreen(),
         Home.id: (context) => const Home(),
         CreateEventScreen.id: (context) => CreateEventScreen(),
+        AccountSettingsScreen.id: (context) => const AccountSettingsScreen(),
+        EditDisplayNameScreen.id: (context) => const EditDisplayNameScreen(),
+        EditEmailScreen.id: (context) => const EditEmailScreen(),
+        EditPasswordScreen.id: (context) => const EditPasswordScreen(),
       },
     );
   }
 }
-
-
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

@@ -15,8 +15,10 @@ class CustomButton extends StatelessWidget {
       required this.buttonText,
       this.isOutlined = false,
       required this.onPressed,
-      this.width = 280});
+      this.width = 280,
+      this.fontSize = 20});
 
+  final double fontSize;
   final String buttonText;
   final bool isOutlined;
   final Function onPressed;
@@ -44,7 +46,7 @@ class CustomButton extends StatelessWidget {
               buttonText,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: fontSize,
                 color: isOutlined ? kTextColor : Colors.white,
               ),
             ),

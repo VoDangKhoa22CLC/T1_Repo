@@ -130,10 +130,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       buildInputField(
                                         hintText: 'Email',
                                         onChanged: (value) => _email = value,
-                                        validator: (value) => !value!
-                                                .contains('@')
-                                            ? 'Please enter a valid email'
-                                            : null, // Can replace with a function here
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter your email';
+                                          }
+                                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                                              .hasMatch(value)) {
+                                            return 'Please enter a valid email address';
+                                          }
+                                          return null;
+                                        },
                                       ),
                                       buildInputField(
                                         hintText: 'Password',

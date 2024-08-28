@@ -158,11 +158,31 @@ class AccountController {
     }
   }
 
-  Future<void> changePassword(String newPassword) async {
+  Future<bool> changePassword(String newPassword) async {
     User? user = _auth.currentUser;
     if (user != null) {
       await user.updatePassword(newPassword);
+      return true;
     }
+    return false;
+  }
+
+  Future<bool> changeEmail(String newEmail) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await user.verifyBeforeUpdateEmail(newEmail);
+      AppUser? appUser = await getCurrentUser();
+      if (appUser != null) {
+        appUser.email = newEmail;
+        await updateInfo(appUser);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> updateInfo(AppUser user) async {
+    await _firestore.doc(user.uid).set(user.toMap());
   }
 
   Future<(AppUser?, String?)> signInWithGoogle() async {
@@ -216,6 +236,14 @@ class AccountController {
   Future<void> signOut() async {
     await _auth.signOut();
     await GoogleSignIn().signOut();
+  }
+
+  Future<void> deleteAccount() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await user.delete();
+      await _firestore.doc(user.uid).delete();
+    }
   }
 
   // Get current user

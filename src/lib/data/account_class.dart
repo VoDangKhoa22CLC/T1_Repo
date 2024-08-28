@@ -5,8 +5,8 @@ enum UserType { Student, Club }
 // Base User class
 class AppUser {
   final String uid;
-  final String email;
-  final String name;
+  String email;
+  String name;
   final UserType userType;
 
   AppUser({
@@ -41,6 +41,14 @@ class AppUser {
   static Future<Uint8List> loadDefaultProfilePicture() async {
     ByteData data = await rootBundle.load('assets/images/dummy.png');
     return data.buffer.asUint8List();
+  }
+
+  void setName(String name) {
+    this.name = name;
+  }
+
+  void setEmail(String email) {
+    this.email = email;
   }
 }
 
@@ -94,9 +102,8 @@ class Club extends AppUser {
   final String profileImage3;
   final String verified;
 
-
-  Club(
-    {required super.uid,
+  Club({
+    required super.uid,
     required super.email,
     required super.name,
     this.description = '',
@@ -106,8 +113,7 @@ class Club extends AppUser {
     required this.profileImage2,
     required this.profileImage3,
     required this.verified,
-    })
-    : super(userType: UserType.Club);
+  }) : super(userType: UserType.Club);
 
   @override
   Map<String, dynamic> toMap() {
