@@ -163,7 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 60), // Space to account for avatar overlap
+            const SizedBox(height: 75), // Space to account for avatar overlap
             // Club name
             Text(
               widget.myClub.name,
@@ -186,7 +186,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 const Icon(Icons.event, color: Colors.grey),
                 const SizedBox(width: 8),
-                Text(widget.myClub.email),
+                Text(
+                  '${widget.myClub.hostedEventIds ?? '0'} events created'
+                )
               ],
             ),
             const SizedBox(height: 20),
@@ -228,7 +230,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
+            Center(
+              child: ElevatedButton.icon(
+                label: const Text('Manage Profile'),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  textStyle: TextStyle(fontSize: 16.0),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfileScreen(myClub: widget.myClub),
+                    ),
+                  );
+                },
+              ),
+            )
           ],
+          
         ),
       ),
     );

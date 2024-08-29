@@ -165,22 +165,6 @@ class _HomeState extends State<Home> {
                   },
                 ),
               ),
-              Visibility(
-                visible: _currentUser is Club,
-                child: ListTile(
-                  leading: const Icon(Icons.calendar_today),
-                  title: const Text('Manage Profile'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            EditProfileScreen(myClub: _currentUser as Club),
-                      ),
-                    ).then((res) => _getUser);
-                  },
-                ),
-              ),
               // New "Manage Clubs" button
               ListTile(
                 leading: const Icon(Icons.group),
