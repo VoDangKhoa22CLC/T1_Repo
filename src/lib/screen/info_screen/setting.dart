@@ -9,9 +9,8 @@ import 'package:lookout_dev/screen/components.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
-  const AccountSettingsScreen({super.key, required this.user});
+  const AccountSettingsScreen({super.key});
   static String id = 'account_settings_screen';
-  final AppUser? user;
 
   @override
   State<AccountSettingsScreen> createState() => _AccountSettingsScreenState();
@@ -19,10 +18,28 @@ class AccountSettingsScreen extends StatefulWidget {
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   final controller = AccountController();
+  AppUser? _user;
 
   @override
   void initState() {
     super.initState();
+    _getUser();
+  }
+
+  Future _getUser() async {
+    AppUser? appUser = await AccountController().getCurrentUser();
+
+    if (appUser != null) {
+      setState(() {
+        _user = appUser;
+      });
+    }
+  }
+
+  void refresh() {
+    setState(() {
+      _getUser();
+    });
   }
 
   @override
@@ -45,9 +62,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         padding: const EdgeInsets.all(10),
         child: ListView(
           children: [
-            // Check if the user data is loaded
-            // If user data is not loaded, show a loading indicator
-            if (widget.user == null)
+            if (_user == null)
               const Text('An error occurred while loading user data'),
             SettingsGroup(
               backgroundColor: Colors.white,
@@ -80,22 +95,20 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            EditEmailScreen(user: widget.user),
+                        builder: (context) => EditEmailScreen(user: _user),
                       ),
                     );
                   },
                   icons: CupertinoIcons.mail_solid,
                   title: "Email",
-                  subtitle: widget.user?.email,
+                  subtitle: _user?.email,
                 ),
                 SettingsItem(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            EditPasswordScreen(user: widget.user),
+                        builder: (context) => EditPasswordScreen(user: _user),
                       ),
                     );
                   },
@@ -105,9 +118,39 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 ),
                 SettingsItem(
                   onTap: () {
-                    controller.signOut();
-                    controller.deleteAccount();
-                    Navigator.popAndPushNamed(context, 'login_screen');
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: Colors.white,
+                          title: const Text('Confirm Account Deletion',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          content: const Text(
+                              'Are you sure you want to DELETE your account?'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('Cancel'),
+                              onPressed: () {
+                                // Close the dialog and do nothing
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: const Text(
+                                'Confirm',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              onPressed: () {
+                                controller.signOut();
+                                controller.deleteAccount();
+                                Navigator.popAndPushNamed(
+                                    context, 'login_screen');
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   icons: CupertinoIcons.delete_solid,
                   title: "Delete account",
@@ -138,6 +181,7 @@ class EditEmailScreen extends StatefulWidget {
 class _EditEmailScreenState extends State<EditEmailScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final AccountController _accountController = AccountController();
 
   @override
@@ -152,17 +196,45 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
     super.dispose();
   }
 
-  void _saveChanges() {
+  Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate()) {
+      bool verify =
+          await _accountController.verifyPassword(_passwordController.text);
+      if (verify == false) {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.error,
+          animType: AnimType.topSlide,
+          title: 'Error',
+          desc: 'Incorrect password. Please try again.',
+          onDismissCallback: (type) {},
+          headerAnimationLoop: false,
+          btnOkOnPress: () {},
+          btnOkColor: kTextColor,
+        ).show();
+
+        return;
+      }
       setState(() {
         _accountController.changeEmail(_emailController.text);
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email updated successfully!')),
-      );
-
-      Navigator.pop(context);
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.info,
+        animType: AnimType.topSlide,
+        title: 'Verify Your Email',
+        desc:
+            'A verification email has been sent to your email address. Your email has been changed but not verified.',
+        onDismissCallback: (type) {
+          Navigator.pop(context);
+        },
+        headerAnimationLoop: false,
+        btnOkOnPress: () {
+          Navigator.pop(context);
+        },
+        btnOkColor: kTextColor,
+      ).show();
     }
   }
 
@@ -189,8 +261,8 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
-              Text(
-                'Please enter your new email. We will send you a verification email to ${widget.user?.email ?? 'your current email'}. You will need to confirm the new email address.',
+              const Text(
+                'Please enter your new email. We will send you a verification email. You will need to confirm the new email address.',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
@@ -203,6 +275,17 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                   }
                   if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                     return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              PasswordInputField(
+                hintText: 'Current Password',
+                onChanged: (value) => _passwordController.text = value,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your current password';
                   }
                   return null;
                 },
@@ -247,7 +330,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
   Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate()) {
       bool verify =
-          await _accountController.verifyPassword(_passwordController.text);
+          await _accountController.verifyPassword(_oldPasswordController.text);
       if (verify == false) {
         AwesomeDialog(
           context: context,
@@ -264,6 +347,12 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
         return;
       }
 
+      setState(() {
+        _accountController.changePassword(_passwordController.text);
+        _oldPasswordController.text = '';
+        _passwordController.text = '';
+      });
+
       AwesomeDialog(
         context: context,
         dialogType: DialogType.success,
@@ -271,19 +360,14 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
         title: 'Success',
         desc: 'Password changed successfully!',
         onDismissCallback: (type) {
-          setState(() {
-            _accountController.changePassword(_passwordController.text);
-          });
+          Navigator.pop(context);
         },
         headerAnimationLoop: false,
         btnOkOnPress: () {
-          setState(() {
-            _accountController.changePassword(_passwordController.text);
-          });
+          Navigator.pop(context);
         },
         btnOkColor: kTextColor,
       ).show();
-      Navigator.pop(context);
     }
   }
 
@@ -315,7 +399,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                 onChanged: (value) => _oldPasswordController.text = value,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your old password';
+                    return 'Please enter your current password';
                   }
                   return null;
                 },
@@ -330,10 +414,10 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
               ),
               const SizedBox(height: 20),
               PasswordInputField(
-                hintText: 'Re-enter password',
+                hintText: 'Confirm password',
                 onChanged: (value) {},
                 validator: (value) => value != _passwordController.text
-                    ? 'Re-entered password do not match'
+                    ? 'Re-entered password does not match'
                     : null, // Can replace with a function here
               ),
               const SizedBox(height: 20),
@@ -394,7 +478,7 @@ class AboutScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             Text(
-              '2212724xx Cao Pham Hoang Thai',
+              '221272382 Cao Pham Hoang Thai',
               textAlign: TextAlign.center,
             ),
             Text(

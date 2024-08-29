@@ -66,13 +66,9 @@ class _HomeState extends State<Home> {
           centerTitle: true,
           title: const FittedBox(
             fit: BoxFit.fitWidth,
-            child: Text(
-              'HCMUS - Lookout',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold
-              )
-            ),
+            child: Text('HCMUS - Lookout',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ),
           backgroundColor: Theme.of(context).primaryColor,
           elevation: 0,
@@ -105,7 +101,8 @@ class _HomeState extends State<Home> {
                     ),
                     // const SizedBox(height: 14),
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.5, // 60% of the screen width
+                      width: MediaQuery.of(context).size.width *
+                          0.5, // 60% of the screen width
                       child: Divider(
                         height: 1,
                         thickness: 2,
@@ -120,7 +117,7 @@ class _HomeState extends State<Home> {
                         fontSize: 24,
                       ),
                     ),
-                    
+
                     Text(
                       _displayEmail,
                       style: const TextStyle(
@@ -163,7 +160,7 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserEventsScreen()),
+                          builder: (context) => const UserEventsScreen()),
                     );
                   },
                 ),
@@ -192,7 +189,7 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ManageClubsScreen()),
+                        builder: (context) => const ManageClubsScreen()),
                   );
                 },
               ),
@@ -203,10 +200,9 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          AccountSettingsScreen(user: _currentUser),
+                      builder: (context) => const AccountSettingsScreen(),
                     ),
-                  );
+                  ).then((res) => _getUser);
                 },
               ),
               ListTile(

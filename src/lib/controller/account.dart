@@ -183,8 +183,10 @@ class AccountController {
         await user.reauthenticateWithCredential(credential);
         return true;
       }
+      print('No user found');
       return false;
-    } on FirebaseAuthException {
+    } on FirebaseAuthException catch (e) {
+      print(e);
       return false;
     }
   }
@@ -412,43 +414,42 @@ class AccountController {
     return (user, error);
   }
 
-  Future editClubProfile({
-    required String uid,
-    required String email,
-    required String name,
-    required String description
-  }) async {
+  Future editClubProfile(
+      {required String uid,
+      required String email,
+      required String name,
+      required String description}) async {
     await _firestore.doc(uid).set({
       "description": description,
       "email": email,
       "name": name,
-    },SetOptions(merge: true));
-
+    }, SetOptions(merge: true));
   }
 
-  Future editProfileImages(String clubID, int imageIndex, String changes, PlatformFile? newImage) async{
+  Future editProfileImages(String clubID, int imageIndex, String changes,
+      PlatformFile? newImage) async {
     String newImgPath = "";
 
-    if (changes == "delete"){
+    if (changes == "delete") {
       newImgPath = "";
-    }
-
-    else if ((changes == "new") & (newImage != null)){
+    } else if ((changes == "new") & (newImage != null)) {
       newImgPath = "pictures/club/$clubID/${newImage?.name}";
       final refPic = _storage.child(newImgPath);
       refPic.putFile(File(newImage!.path!));
     }
 
-    await _firestore.doc(clubID).set({'profileImage${imageIndex + 1}' : newImgPath}, SetOptions(merge: true));
+    await _firestore.doc(clubID).set(
+        {'profileImage${imageIndex + 1}': newImgPath}, SetOptions(merge: true));
   }
 
-  Future editProfilePic(String clubID, PlatformFile? newImage) async{
-
+  Future editProfilePic(String clubID, PlatformFile? newImage) async {
     String newImgPath = "pictures/club/$clubID/${newImage?.name}";
     final refPic = _storage.child(newImgPath);
     refPic.putFile(File(newImage!.path!));
 
-    await _firestore.doc(clubID).set({'profilePicture' : newImgPath}, SetOptions(merge: true));
+    await _firestore
+        .doc(clubID)
+        .set({'profilePicture': newImgPath}, SetOptions(merge: true));
   }
 
   Future<String> getImageFromUser(String clubID, String terms) async {
@@ -457,5 +458,4 @@ class AccountController {
 
     return clubData[terms];
   }
-
 }
