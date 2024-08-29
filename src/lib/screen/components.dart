@@ -191,27 +191,6 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
   }
 }
 
-Widget buildInputField({
-  required String hintText,
-  required ValueChanged<String> onChanged,
-  required String? Function(String?) validator,
-  bool obscureText = false,
-}) {
-  return CustomTextField(
-    child: TextFormField(
-      obscureText: obscureText,
-      onChanged: onChanged,
-      validator: validator,
-      style: const TextStyle(),
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.grey),
-      ),
-    ),
-  );
-}
-
 class CustomBottomScreen extends StatelessWidget {
   const CustomBottomScreen({
     super.key,

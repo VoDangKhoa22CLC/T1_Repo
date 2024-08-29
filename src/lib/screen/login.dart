@@ -90,13 +90,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return PopScope(
       onPopInvoked: (bool didPop) async {
         if (didPop) return;
-        Navigator.popAndPushNamed(context, WelcomeScreen.id);
+        Navigator.pop(context);
       },
       child: Scaffold(
         appBar: AppBar(
           leading: BackButton(
             onPressed: () {
-              Navigator.popAndPushNamed(context, WelcomeScreen.id);
+              Navigator.pop(context);
             },
           ),
         ),
@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     const ScreenTitle(title: 'Login'),
-                                    buildInputField(
+                                    CustomInputField(
                                       hintText: 'Email',
                                       onChanged: (value) => _email = value,
                                       validator: (value) =>
@@ -136,13 +136,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                               ? 'Please enter a valid email'
                                               : null,
                                     ),
-                                    buildInputField(
+                                    PasswordInputField(
                                       hintText: 'Password',
                                       onChanged: (value) => _password = value,
                                       validator: (value) => value!.length < 8
                                           ? 'Password must be at least 8 characters'
                                           : null,
-                                      obscureText: true,
                                     ),
                                     CustomBottomScreen(
                                       textButton: 'Login',

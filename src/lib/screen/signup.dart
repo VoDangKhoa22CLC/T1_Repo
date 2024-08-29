@@ -72,13 +72,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return PopScope(
       onPopInvoked: (bool didPop) async {
         if (didPop) return;
-        Navigator.popAndPushNamed(context, WelcomeScreen.id);
+        Navigator.pop(context);
       },
       child: Scaffold(
         appBar: AppBar(
           leading: BackButton(
             onPressed: () {
-              Navigator.popAndPushNamed(context, WelcomeScreen.id);
+              Navigator.pop(context);
             },
           ),
         ),
