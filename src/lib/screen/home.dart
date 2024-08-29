@@ -103,7 +103,7 @@ class _HomeState extends State<Home> {
                     Container(
                       width: MediaQuery.of(context).size.width *
                           0.5, // 60% of the screen width
-                      child: Divider(
+                      child: const Divider(
                         height: 1,
                         thickness: 2,
                         color: Colors.white,
