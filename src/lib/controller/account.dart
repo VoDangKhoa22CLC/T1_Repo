@@ -240,7 +240,13 @@ class AccountController {
         DocumentSnapshot doc = await _firestore.doc(user.uid).get();
 
         if (!doc.exists) {
-          return (null, 'Account with this email does not exist');
+          // Create a new user document in Firestore
+          await _firestore.doc(user.uid).set({
+            'uid': user.uid,
+            'name': user.displayName,
+            'email': user.email,
+            'userType': UserType.Student.toString(),
+          });
         }
 
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
