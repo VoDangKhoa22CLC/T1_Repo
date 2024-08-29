@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
+import 'package:lookout_dev/screen/info_screen/event_edit.dart';
 
 import '../../data/account_class.dart';
 
@@ -61,15 +62,40 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
                 IconButton(
                   icon: const Icon(Icons.edit, color: Colors.blue),
                   onPressed: () {
-                    // Placeholder
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EventEditScreen(myEvent: event),
+                      )
+                    );
                   },
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
-                    // Placeholder
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Deleted ${event.eventName}')),
+                    AlertDialog(
+                      title: const Text("Delete Event"),
+                      content: const Text("Remove this event? (This action can't be undone)"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog without saving
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            EventController().deleteEvent(eventID: event.eventID);
+                            // do some saving action here
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Deleted ${event.eventName}')),
+                            );
+                            Navigator.of(context).pop(); // Close the dialog
+                          },
+                          child: const Text('Confirm'),
+                        ),
+                      ],
                     );
                   },
                 ),

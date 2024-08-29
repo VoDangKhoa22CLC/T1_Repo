@@ -24,7 +24,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final controller = AccountController();
   String _searchQuery = "";
-  String _filterQuery = "Time↓";
+  String _filterQuery = "New";
   final List<String> _filterOptions = <String>["New", "Time↓", "Time↑"];
   AppUser? _currentUser;
 
@@ -149,8 +149,7 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            EditProfileScreen(myClub: _currentUser as Club),
+                        builder: (context) => EditProfileScreen(myClub: _currentUser as Club),
                       ),
                     );
                   },

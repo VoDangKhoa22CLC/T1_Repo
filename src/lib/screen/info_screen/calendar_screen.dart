@@ -44,11 +44,11 @@ class _CalendarState extends State {
     for (String eventID in _eventsIds){
       EventClass? thisEvent = await eventController.getEvent(eventID: eventID);
       if (thisEvent != null){
-        if (!eventTileMap.containsKey(DateTime.parse("${thisEvent.eventTime}Z"))) {
-          eventTileMap[DateTime.parse("${thisEvent.eventTime}Z")] = <EventTile>[EventTile(myEvent: thisEvent)];
+        if (!eventTileMap.containsKey(DateTime.parse("${thisEvent.eventTime}Z").copyWith(hour: 0, minute: 0, second: 0, microsecond: 0, millisecond: 0))) {
+          eventTileMap[DateTime.parse("${thisEvent.eventTime}Z").copyWith(hour: 0, minute: 0, second: 0, microsecond: 0, millisecond: 0)] = <EventTile>[EventTile(myEvent: thisEvent)];
         }
         else {
-          eventTileMap[DateTime.parse("${thisEvent.eventTime}Z")]?.add(EventTile(myEvent: thisEvent));
+          eventTileMap[DateTime.parse("${thisEvent.eventTime}Z").copyWith(hour: 0, minute: 0, second: 0, microsecond: 0, millisecond: 0)]?.add(EventTile(myEvent: thisEvent));
         }
       }
     }

@@ -21,7 +21,7 @@ class _EventEditScreenState extends State<EventEditScreen> {
   final _formKey = GlobalKey<FormState>();
   String _eventName = '';
   String _eventDescription = '';
-  DateTime _eventDate = DateTime(2024);
+  DateTime _eventDate = DateTime.now().add(const Duration(days: 1));
   String _eventLocation = '';
   String _eventNotes = '';
   final EventController eventController = EventController();
@@ -91,6 +91,91 @@ class _EventEditScreenState extends State<EventEditScreen> {
     }
   }
 
+  InputDecoration _textFormInputDecoration(String labelText)  {
+    return InputDecoration(
+      labelText: labelText,
+      labelStyle: const TextStyle(color: Colors.black87),
+      filled: true,
+      fillColor: Colors.blue[50],
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).primaryColor)
+      ),
+      focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).primaryColor)
+      ),
+    );
+  }
+
+  Widget _getUserImageInput(int index){
+    return _pickedImage[index] != null ? Flexible(
+      child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.file(File(_pickedImage[index]!.path!), width: 120, height: 120,),
+            IconButton(
+              onPressed: (){_unselectPicture(index);},
+              icon: const Icon(Icons.cancel_outlined),
+              color: Colors.white,
+            ),
+          ]
+      ),
+    ) : _urls[index] != "" ?
+    Flexible(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.network(_urls[index]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                onPressed: (){_selectPicture(index);},
+                icon: const Icon(Icons.change_circle_outlined),
+              ),
+              IconButton(
+                onPressed: (){_unselectPicture(index);},
+                icon: const Icon(Icons.cancel_outlined),
+              )
+            ],
+          )
+        ],
+      ),
+    ) :
+    Flexible(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const SizedBox(width: 120, height: 120),
+          IconButton(
+            onPressed: (){_selectPicture(index);},
+            icon: const Icon(Icons.add_photo_alternate_outlined),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.myEvent.eventImage1 != '') {
+      setState(() {
+        _loadImage(widget.myEvent.eventImage1, 0);
+      });
+    }
+    if (widget.myEvent.eventImage2 != '') {
+      setState(() {
+        _loadImage(widget.myEvent.eventImage2, 1);
+      });
+    }
+    if (widget.myEvent.eventImage3 != '') {
+      setState(() {
+        _loadImage(widget.myEvent.eventImage3, 2);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,10 +192,13 @@ class _EventEditScreenState extends State<EventEditScreen> {
             children: <Widget>[
               TextFormField(
                 initialValue: widget.myEvent.eventName,
-                decoration: const InputDecoration(labelText: 'Event Name'),
+                minLines: 1,
+                maxLines: 2,
+                cursorColor: Theme.of(context).primaryColor,
+                decoration: _textFormInputDecoration('Event Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an event name';
+                    return 'Please enter event name.';
                   }
                   return null;
                 },
@@ -118,175 +206,107 @@ class _EventEditScreenState extends State<EventEditScreen> {
                   _eventName = value!;
                 },
               ),
-              TextFormField(
-                initialValue: widget.myEvent.eventLongDescription,
-                decoration: const InputDecoration(labelText: 'Event Description'),
-                onSaved: (value) {
-                  _eventDescription = value!;
-                },
-              ),
-              TextFormField(
-                initialValue: widget.myEvent.eventLocation,
-                decoration: const InputDecoration(labelText: 'Event Location'),
-                onSaved: (value) {
-                  _eventLocation = value!;
-                },
-              ),
-              TextFormField(
-                initialValue: widget.myEvent.eventShortDescription,
-                decoration: const InputDecoration(labelText: 'Event Notes'),
-                onSaved: (value) {
-                  _eventNotes = value!;
-                },
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Text(
-                    'Date: ${_eventDate.toLocal()}'.split(' ')[0],
+                const SizedBox(height: 10),
+                // Enter event location
+                TextFormField(
+                  initialValue: widget.myEvent.eventLocation,
+                  minLines: 1,
+                  maxLines: 2,
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: _textFormInputDecoration('Event Location'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter event location.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _eventLocation = value!;
+                  },
+                ),
+                const SizedBox(height: 10),
+                // Enter event description
+                TextFormField(
+                  initialValue: widget.myEvent.eventLongDescription,
+                  minLines: 1,
+                  maxLines: 4,
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: _textFormInputDecoration('Event Description'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an event description.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _eventDescription = value!;
+                  },
+                ),
+                const SizedBox(height: 10),
+                // Enter event notes
+                TextFormField(
+                  initialValue: widget.myEvent.eventShortDescription,
+                  minLines: 1,
+                  maxLines: 2,
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: _textFormInputDecoration('Event Notes'),
+                  onSaved: (value) {
+                    _eventNotes = value!;
+                  },
+                ),
+                const SizedBox(height: 10),
+                // Select Date
+                TextFormField(
+                  controller: TextEditingController(text: _eventDate.toLocal().toString().split(' ')[0]),
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Event Date',
+                    labelStyle: const TextStyle(color: Colors.black87),
+                    filled: true,
+                    fillColor: Colors.blue[50],
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor)
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor)
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      onPressed: () => _selectDate(context),
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
+                  validator: (value) {
+                    if (value != null) {
+                      String year = value.split('-')[0];
+                      String month = value.split('-')[1];
+                      String day = value.split('-')[2];
+                      if ((int.parse(year) < DateTime.now().year) ||
+                          (int.parse(year) == DateTime.now().year && int.parse(month) < DateTime.now().month) ||
+                          (int.parse(year) == DateTime.now().year && int.parse(month) == DateTime.now().month && int.parse(day) < DateTime.now().day)
+                      )
+                        return 'Please enter a valid date';
+                      return null;
+                    }
+                    return null;
+                  },
+                ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  _pickedImage[0] != null ? Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.file(File(_pickedImage[0]!.path!), width: 120, height: 120,),
-                        IconButton(
-                          onPressed: (){_unselectPicture(0);},
-                          icon: const Icon(Icons.motion_photos_off_outlined),
-                          color: Colors.white,
-                        ),
-                      ]
-                  ) :
-                      _urls[0] != "" ?
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Image.network(_urls[0]),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          IconButton(
-                            onPressed: (){_selectPicture(0);},
-                            icon: const Icon(Icons.add_photo_alternate_outlined),
-                          ),
-                          IconButton(
-                            onPressed: (){_unselectPicture(0);},
-                            icon: const Icon(Icons.add_photo_alternate_outlined),
-                          )
-                        ],
-                      )
-                    ],
-                  ) :
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const SizedBox(width: 120, height: 120),
-                      IconButton(
-                        onPressed: (){_selectPicture(0);},
-                        icon: const Icon(Icons.add_photo_alternate_outlined),
-                      )
-                    ],
-                  ),
-                  _pickedImage[1] != null ? Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.file(File(_pickedImage[1]!.path!), width: 120, height: 120,),
-                        IconButton(
-                          onPressed: (){_unselectPicture(1);},
-                          icon: const Icon(Icons.motion_photos_off_outlined),
-                          color: Colors.white,
-                        ),
-                      ]
-                  ) : _urls[1] != "" ?
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.network(_urls[1]),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            IconButton(
-                              onPressed: (){_selectPicture(1);},
-                              icon: const Icon(Icons.add_photo_alternate_outlined),
-                            ),
-                            IconButton(
-                              onPressed: (){_unselectPicture(1);},
-                              icon: const Icon(Icons.add_photo_alternate_outlined),
-                            )
-                          ],
-                        )
-                      ],
-                    ) :
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const SizedBox(width: 120, height: 120),
-                      IconButton(
-                        onPressed: (){_selectPicture(1);},
-                        icon: const Icon(Icons.add_photo_alternate_outlined),
-                      )
-                    ],
-                  ),
-                  _pickedImage[2] != null ? Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Image.file(File(_pickedImage[2]!.path!), width: 120, height: 120,),
-                      IconButton(
-                        onPressed: (){_unselectPicture(2);},
-                        icon: const Icon(Icons.motion_photos_off_outlined),
-                        color: Colors.white,
-                      ),
-                    ]
-                  ) : _urls[2] != "" ?
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                      Image.network(_urls[2]),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            IconButton(
-                              onPressed: (){_selectPicture(2);},
-                              icon: const Icon(Icons.add_photo_alternate_outlined),
-                            ),
-                            IconButton(
-                              onPressed: (){_unselectPicture(2);},
-                              icon: const Icon(Icons.add_photo_alternate_outlined),
-                            )
-                          ],
-                      )
-                    ],
-                    ) : Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const SizedBox(width: 120, height: 120),
-                      IconButton(
-                        onPressed: (){_selectPicture(2);},
-                        icon: const Icon(Icons.add_photo_alternate_outlined),
-                      )
-                    ],
-                  ),
+                  _getUserImageInput(0),
+                  _getUserImageInput(1),
+                  _getUserImageInput(2)
                 ],
               ),
               ElevatedButton(
                 onPressed: () {
                   _editEvent();
                   for (int i = 0; i < 3; i++){
-                    if (_urls[i] == ""){
-                      if (_pickedImage[i] != null) {
-                        eventController.editImages(widget.myEvent.eventID, i, "new", _pickedImage[i]);
-                      } else{
-                        eventController.editImages(widget.myEvent.eventID, i, "delete", null);
-                      }
+                    if (_pickedImage[i] != null){
+                      eventController.editImages(widget.myEvent.eventID, i, "new", _pickedImage[i]);
+                    }
+                    else if (_urls[i] == ""){
+                      eventController.editImages(widget.myEvent.eventID, i, "delete", null);
                     }
                   }
                 },
@@ -295,7 +315,7 @@ class _EventEditScreenState extends State<EventEditScreen> {
                 ),
                 child: const Text(
                   'Save Changes',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.black87),
                 ),
               ),
             ],

@@ -5,12 +5,11 @@ import 'package:lookout_dev/screen/login.dart';
 import 'package:lookout_dev/screen/signup.dart';
 import 'package:lookout_dev/screen/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'controller/account.dart';
 import 'firebase_options.dart';
 import 'notification_configure/notification.dart';
 import 'package:lookout_dev/screen/info_screen/event_create.dart';
-import 'package:lookout_dev/screen/info_screen/setting.dart';
+// import 'package:lookout_dev/screen/info_screen/setting.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,10 +68,10 @@ class MyApp extends StatelessWidget {
         Home.id: (context) => const Home(),
         // CreateEventScreen.id: (context) => CreateEventScreen(AccountController().getCurrentUser() ),
         // CreateEventScreen.id: (context) => CreateEventScreen(),
-        AccountSettingsScreen.id: (context) => const AccountSettingsScreen(),
-        EditDisplayNameScreen.id: (context) => const EditDisplayNameScreen(),
-        EditEmailScreen.id: (context) => const EditEmailScreen(),
-        EditPasswordScreen.id: (context) => const EditPasswordScreen(),
+        // AccountSettingsScreen.id: (context) => const AccountSettingsScreen(),
+        // EditDisplayNameScreen.id: (context) => const EditDisplayNameScreen(),
+        // EditEmailScreen.id: (context) => const EditEmailScreen(),
+        // EditPasswordScreen.id: (context) => const EditPasswordScreen(),
       },
     );
   }

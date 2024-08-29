@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/data/event_class.dart';
@@ -17,11 +21,103 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _clubName = "";
   String _clubEmail = "";
   String _clubIntro = "";
-  // // Controllers to manage the state of text fields
-  // final TextEditingController nameController = TextEditingController(text: 'SAB Entertainment & Arts');
-  // final TextEditingController emailController = TextEditingController(text: 'sab@fit.hcmus.edu.vn');
-  // final TextEditingController locationController = TextEditingController(text: 'sab@fit.hcmus.edu.vn');
-  // final TextEditingController introController = TextEditingController(text: 'Fanpage chính thức của Ban Entertainment & Arts trực thuộc SAB.\n📌 Follow fanpage SAB: fb.com/sab.ctda');
+
+  List<PlatformFile?> _pickedImage = <PlatformFile?>[null, null, null];
+  final List<String> _urls = <String>["", "", ""];
+  PlatformFile? _clubPFP = null;
+  String _urlPFP = "";
+
+  Future _selectPicture(int picIndex) async {
+    final res = await FilePicker.platform.pickFiles();
+
+    if (res == null) return;
+
+    setState(() {
+      _pickedImage[picIndex] = res.files.first;
+    });
+  }
+
+  Future _selectProfilePicture() async {
+    final res = await FilePicker.platform.pickFiles();
+
+    if (res == null) return;
+
+    setState(() {
+      _clubPFP = res.files.first;
+    });
+  }
+
+  Future _unselectPicture(int picIndex) async {
+    setState(() {
+      if (_pickedImage[picIndex] != null) {
+        _pickedImage[picIndex] = null;
+      }
+      else {
+        _urls[0] = "";
+      }
+    });
+  }
+
+  Future _unselectProfilePicture() async {
+    setState(() {
+      if (_clubPFP != null) {
+        _clubPFP = null;
+      }
+      else {
+        _urlPFP = "";
+      }
+    });
+  }
+
+  Future _loadImage(String inputURL, int index) async {
+    final firebaseStorage = FirebaseStorage.instance.ref().child(inputURL);
+    final url = await firebaseStorage.getDownloadURL();
+    setState(() {
+      _urls[index] = url;
+    });
+  }
+
+  Future _loadPFP(String inputURL) async {
+    final firebaseStorage = FirebaseStorage.instance.ref().child(inputURL);
+    final url = await firebaseStorage.getDownloadURL();
+    setState(() {
+      _urlPFP = url;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.myClub.profileImage1 != '') {
+      setState(() {
+        _loadImage(widget.myClub.profileImage1, 0);
+      });
+    }
+    if (widget.myClub.profileImage2 != '') {
+      setState(() {
+        _loadImage(widget.myClub.profileImage2, 0);
+      });
+    }
+    if (widget.myClub.profileImage3 != '') {
+      setState(() {
+        _loadImage(widget.myClub.profileImage3, 0);
+      });
+    }
+
+    if (widget.myClub.profilePicture != '') {
+      setState(() {
+        _loadPFP(widget.myClub.profilePicture);
+      });
+    }
+
+    setState(() {
+      _clubName = widget.myClub.name;
+      _clubIntro = widget.myClub.description!;
+      _clubEmail = widget.myClub.email;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +162,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   Positioned(
                     top: 150,
                     left: MediaQuery.of(context).size.width / 2 - 50,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundImage: const AssetImage('images/avatar_default.png'),
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage:
+                          _clubPFP != null ? Image.file(File(_clubPFP!.path!)) as ImageProvider
+                          : _urlPFP != "" ? Image.network(_urlPFP) as ImageProvider :
+                          const AssetImage('images/avatar_default.png'),
+                        ),
+                        IconButton(
+                          onPressed: (){_selectProfilePicture();},
+                          icon: const Icon(Icons.change_circle_outlined),
+                        ),
+                      ]
                     ),
                   ),
                 ],
@@ -82,38 +189,44 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   children: [
                     // Name field
                     TextFormField(
-                      initialValue: widget.myClub.name,
+                      initialValue: _clubName,
                       decoration: const InputDecoration(
                         labelText: 'Name',
                         border: OutlineInputBorder(),
                       ),
                       onSaved: (value){
-                        _clubName = value!;
+                        setState(() {
+                          _clubName = value!;
+                        });
                       },
                     ),
                     const SizedBox(height: 16),
                     // Email field
                     TextFormField(
-                      initialValue: widget.myClub.email,
+                      initialValue: _clubEmail,
                       decoration: const InputDecoration(
                         labelText: 'Email',
                         border: OutlineInputBorder(),
                       ),
                       onSaved: (value){
-                        _clubEmail = value!;
+                        setState(() {
+                          _clubEmail = value!;
+                        });
                       },
                     ),
                     const SizedBox(height: 16),
                     // Introduction field
                     TextFormField(
-                      initialValue: widget.myClub.description,
+                      initialValue: _clubIntro,
                       decoration: const InputDecoration(
                         labelText: 'Intro',
                         border: OutlineInputBorder(),
                       ),
                       maxLines: 3,
                       onSaved: (value){
-                        _clubIntro = value!;
+                        setState(() {
+                          _clubIntro = value!;
+                        });
                       },
                     ),
                     const SizedBox(height: 16),
@@ -138,6 +251,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
+                          _formKey.currentState!.save();
                           _showConfirmationDialog(context,
                           'Save Changes',
                           'Do you want to save changes to the profile?', _clubName, _clubEmail, _clubIntro);
@@ -178,17 +292,14 @@ void _showConfirmationDialog(BuildContext context, String title, String descript
                   uid: widget.myClub.uid,
                   email: email,
                   name: name,
-                  userType: widget.myClub.userType,
                   description: desc,
-                  hostedEventIds: widget.myClub.hostedEventIds ?? [],
                   profilePicture: widget.myClub.profilePicture,
                   profileImage1: widget.myClub.profileImage1,
                   profileImage2: widget.myClub.profileImage2,
                   profileImage3: widget.myClub.profileImage3,
-                  verified: widget.myClub.verified
               );
-              Navigator.of(context).pop(); // Close the dialog
-              Navigator.pop(context); // Return to the previous screen
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
             child: const Text('Confirm'),
           ),

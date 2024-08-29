@@ -77,20 +77,48 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     }
   }
 
-    InputDecoration _textFormInputDecoration(String labelText)  {
-      return InputDecoration(
-          labelText: labelText,
-          labelStyle: const TextStyle(color: Colors.black87),
-          filled: true,
-          fillColor: Colors.blue[50],
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).primaryColor)
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).primaryColor)
-          ),
-      );
-    }
+  InputDecoration _textFormInputDecoration(String labelText)  {
+    return InputDecoration(
+        labelText: labelText,
+        labelStyle: const TextStyle(color: Colors.black87),
+        filled: true,
+        fillColor: Colors.blue[50],
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).primaryColor)
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).primaryColor)
+        ),
+    );
+  }
+
+  Widget _getUserImageInput(int index){
+    return _pickedImage[index] != null ? Flexible(
+      child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.file(File(_pickedImage[index]!.path!), width: 120, height: 120,),
+            IconButton(
+              onPressed: (){_unselectPicture(index);},
+              icon: const Icon(Icons.motion_photos_off_outlined),
+              color: Colors.white,
+            ),
+          ]
+      ),
+    ) :
+    Flexible(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox(width: 120, height: 120),
+          IconButton(
+            onPressed: (){_selectPicture(index);},
+            icon: const Icon(Icons.add_photo_alternate_outlined),
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,87 +230,16 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         return 'Please enter a valid date';
                       return null;
                     }
+                    return null;
                   },
                 ),
                 // Add image section
                 Row(
                   // mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    _pickedImage[0] != null ? Flexible(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.file(File(_pickedImage[0]!.path!), width: 120, height: 120,),
-                          IconButton(
-                            onPressed: (){_unselectPicture(0);},
-                            icon: const Icon(Icons.motion_photos_off_outlined),
-                            color: Colors.white,
-                          ),
-                        ]
-                      ),
-                    ) :
-                    Flexible(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(width: 120, height: 120),
-                          IconButton(
-                            onPressed: (){_selectPicture(0);},
-                            icon: const Icon(Icons.add_photo_alternate_outlined),
-                          )
-                        ],
-                      ),
-                    ),
-                    _pickedImage[1] != null ? Flexible(
-                      child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.file(File(_pickedImage[1]!.path!), width: 120, height: 120,),
-                            IconButton(
-                              onPressed: (){_unselectPicture(1);},
-                              icon: const Icon(Icons.motion_photos_off_outlined),
-                              color: Colors.white,
-                            ),
-                          ]
-                      ),
-                    ) :
-                    Flexible(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(width: 120, height: 120),
-                          IconButton(
-                            onPressed: (){_selectPicture(1);},
-                            icon: const Icon(Icons.add_photo_alternate_outlined),
-                          )
-                        ],
-                      ),
-                    ),
-                    _pickedImage[2] != null ? Flexible(
-                      child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.file(File(_pickedImage[2]!.path!), width: 120, height: 120,),
-                            IconButton(
-                              onPressed: (){_unselectPicture(2);},
-                              icon: const Icon(Icons.motion_photos_off_outlined),
-                              color: Colors.white,
-                            ),
-                          ]
-                      ),
-                    ) :
-                    Flexible(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const SizedBox(width: 120, height: 120),
-                          IconButton(
-                            onPressed: (){_selectPicture(2);},
-                            icon: const Icon(Icons.add_photo_alternate_outlined),
-                          )
-                        ],
-                      ),
-                    ),
+                    _getUserImageInput(0),
+                    _getUserImageInput(1),
+                    _getUserImageInput(2),
                   ],
                 ),
                 const SizedBox(height: 10),
