@@ -139,7 +139,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                                 style: TextStyle(color: Colors.red),
                               ),
                               onPressed: () {
-                                controller.signOut();
                                 controller.deleteAccount();
                                 Navigator.popAndPushNamed(
                                     context, 'welcome_screen');
