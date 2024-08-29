@@ -3,6 +3,7 @@ import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/calendar_screen.dart';
 import 'package:lookout_dev/screen/info_screen/club_profile.dart';
+import 'package:lookout_dev/screen/info_screen/setting.dart';
 import 'package:lookout_dev/screen/info_screen/user_screen.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/screen/welcome.dart';
@@ -96,7 +97,7 @@ class _HomeState extends State<Home> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'user@example.com', 
+                      'user@example.com',
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 16,
@@ -112,7 +113,8 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileScreen(currentClub: _currentUser as Club),
+                      builder: (context) =>
+                          ProfileScreen(currentClub: _currentUser as Club),
                     ),
                   );
                 },
@@ -135,7 +137,9 @@ class _HomeState extends State<Home> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => UserEventsScreen(myClub: _currentUser as Club)),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              UserEventsScreen(myClub: _currentUser as Club)),
                     );
                   },
                 ),
@@ -149,25 +153,33 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfileScreen(myClub: _currentUser as Club),
+                        builder: (context) =>
+                            EditProfileScreen(myClub: _currentUser as Club),
                       ),
                     );
                   },
                 ),
               ),
               ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Settings'),
-                onTap: () =>
-                    Navigator.pushNamed(context, 'account_settings_screen'),
-              ),
+                  leading: const Icon(Icons.settings),
+                  title: const Text('Settings'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AccountSettingsScreen(user: _currentUser),
+                      ),
+                    );
+                  }),
               ListTile(
-                leading: const Icon(Icons.logout, color: Colors.red,),
+                leading: const Icon(
+                  Icons.logout,
+                  color: Colors.red,
+                ),
                 title: const Text(
                   'Sign Out',
-                  style: TextStyle(
-                    color: Colors.red
-                  ),
+                  style: TextStyle(color: Colors.red),
                 ),
                 onTap: () {
                   // Show confirmation dialog when sign out is tapped
@@ -175,8 +187,10 @@ class _HomeState extends State<Home> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Confirm Sign Out', style: TextStyle(fontWeight: FontWeight.bold)),
-                        content: const Text('Are you sure you want to sign out?'),
+                        title: const Text('Confirm Sign Out',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        content:
+                            const Text('Are you sure you want to sign out?'),
                         actions: <Widget>[
                           TextButton(
                             child: const Text('Cancel'),
@@ -186,14 +200,18 @@ class _HomeState extends State<Home> {
                             },
                           ),
                           TextButton(
-                            child: const Text('Confirm', style: TextStyle(color: Colors.red),),
+                            child: const Text(
+                              'Confirm',
+                              style: TextStyle(color: Colors.red),
+                            ),
                             onPressed: () {
                               // Perform sign out action
                               controller.signOut();
                               // Close the dialog
                               Navigator.of(context).pop();
                               // Navigate to the WelcomeScreen
-                              Navigator.popAndPushNamed(context, WelcomeScreen.id);
+                              Navigator.popAndPushNamed(
+                                  context, WelcomeScreen.id);
                             },
                           ),
                         ],
@@ -295,7 +313,10 @@ class _HomeState extends State<Home> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CreateEventScreen(myClub: _currentUser as Club,)),
+                MaterialPageRoute(
+                    builder: (context) => CreateEventScreen(
+                          myClub: _currentUser as Club,
+                        )),
               );
             },
             child: const Text('CREATE EVENT'),

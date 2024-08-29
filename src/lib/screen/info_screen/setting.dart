@@ -2,31 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/data/account_class.dart';
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart';
 import 'package:lookout_dev/screen/components.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
-  const AccountSettingsScreen({super.key});
+  const AccountSettingsScreen({super.key, required this.user});
   static String id = 'account_settings_screen';
+  final AppUser? user;
 
   @override
-  _AccountSettingsScreenState createState() => _AccountSettingsScreenState();
+  State<AccountSettingsScreen> createState() => _AccountSettingsScreenState();
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   final controller = AccountController();
-  AppUser? user;
 
   @override
   void initState() {
     super.initState();
-    _getCurrentUser();
-  }
-
-  Future<void> _getCurrentUser() async {
-    user = await controller.getCurrentUser();
-    setState(() {}); // Update the UI after getting the user
   }
 
   @override
@@ -50,13 +43,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         child: ListView(
           children: [
             // Check if the user data is loaded
-            if (user != null)
+            if (widget.user != null)
               SimpleUserCard(
-                userName: user!.name,
+                userName: widget.user!.name,
                 userProfilePic: const AssetImage("assets/images/dummy.png"),
               ),
             // If user data is not loaded, show a loading indicator
-            if (user == null) Center(child: CircularProgressIndicator()),
+            if (widget.user == null)
+              const Center(child: CircularProgressIndicator()),
 
             SettingsGroup(
               backgroundColor: Colors.white,
@@ -86,21 +80,18 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               settingsGroupTitle: "Account",
               items: [
                 SettingsItem(
-                  onTap: () =>
-                      Navigator.pushNamed(context, EditDisplayNameScreen.id),
-                  icons: Icons.comment_outlined,
-                  title: "Display name",
-                  subtitle: user?.name ?? 'Not set',
-                ),
-                SettingsItem(
                   onTap: () => Navigator.pushNamed(context, EditEmailScreen.id),
                   icons: CupertinoIcons.mail_solid,
                   title: "Email",
-                  subtitle: user?.email,
+                  subtitle: widget.user?.email,
                 ),
                 SettingsItem(
-                  onTap: () =>
-                      Navigator.pushNamed(context, EditPasswordScreen.id),
+                  onTap: () {
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EditPasswordScreen(user: widget.user),
+                    );
+                  },
                   icons: CupertinoIcons.lock,
                   title: "Password",
                   subtitle: "********",
@@ -121,101 +112,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class EditDisplayNameScreen extends StatefulWidget {
-  final AppUser? user;
-  static const id = 'edit_display_name_screen';
-
-  const EditDisplayNameScreen({Key? key, this.user}) : super(key: key);
-
-  @override
-  _EditDisplayNameScreenState createState() => _EditDisplayNameScreenState();
-}
-
-class _EditDisplayNameScreenState extends State<EditDisplayNameScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _displayNameController = TextEditingController();
-  final AccountController _accountController = AccountController();
-
-  @override
-  void initState() {
-    super.initState();
-    _displayNameController.text = widget.user?.name ?? '';
-  }
-
-  @override
-  void dispose() {
-    _displayNameController.dispose();
-    super.dispose();
-  }
-
-  void _saveChanges() {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        widget.user?.name = _displayNameController.text;
-        _accountController.updateInfo(widget.user!);
-      });
-
-      AwesomeDialog(
-        context: context,
-        dialogType: DialogType.error,
-        animType: AnimType.topSlide,
-        title: 'Success',
-        desc: 'Your display name has been updated.',
-        onDismissCallback: (type) {
-          Navigator.popAndPushNamed(context, 'account_settings_screen');
-        },
-        headerAnimationLoop: false,
-        btnOkOnPress: () {
-          Navigator.popAndPushNamed(context, 'account_settings_screen');
-        },
-        btnOkColor: kTextColor,
-      ).show();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Edit Display Name'),
-        backgroundColor: Theme.of(context).primaryColor,
-        leading: BackButton(
-          onPressed: () =>
-              Navigator.popAndPushNamed(context, 'account_settings_screen'),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              buildInputField(
-                hintText: 'New name',
-                onChanged: (value) => _displayNameController.text = value,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your new name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              CustomButton(
-                buttonText: 'Save Changes',
-                onPressed: _saveChanges,
-                width: 160,
-                fontSize: 14,
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -350,7 +246,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Edit Password'),
+        title: Text('Change Password'),
         backgroundColor: Theme.of(context).primaryColor,
         leading: BackButton(
           onPressed: () =>
@@ -364,6 +260,21 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
           child: Column(
             children: [
               buildInputField(
+                hintText: 'Current Password',
+                onChanged: (value) => _passwordController.text = value,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your old password';
+                  }
+                  if (_accountController.verifyPassword(value) == false) {
+                    return 'Incorrect password';
+                  }
+                  return null;
+                },
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              buildInputField(
                 hintText: 'Password',
                 onChanged: (value) => _passwordController.text = value,
                 validator: (value) => value!.length < 8
@@ -371,7 +282,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                     : null, // Can replace with a function here
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               buildInputField(
                 hintText: 'Re-enter Password',
                 onChanged: (value) {},

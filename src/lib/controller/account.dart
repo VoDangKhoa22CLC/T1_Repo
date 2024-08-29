@@ -167,6 +167,23 @@ class AccountController {
     return false;
   }
 
+  Future<bool> verifyPassword(String password) async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: password,
+        );
+        await user.reauthenticateWithCredential(credential);
+        return true;
+      }
+      return false;
+    } on FirebaseAuthException {
+      return false;
+    }
+  }
+
   Future<bool> changeEmail(String newEmail) async {
     User? user = _auth.currentUser;
     if (user != null) {
@@ -400,16 +417,14 @@ class AccountController {
     required String profileImage2,
     required String profileImage3,
   }) async {
-
     await _firestore.doc(uid).set({
-      "description" : description,
+      "description": description,
       "email": email,
       "name": name,
       "profilePicture": profilePicture,
       "profileImage1": profileImage1,
       "profileImage2": profileImage2,
       "profileImage3": profileImage3,
-    },SetOptions(merge: true));
-
+    }, SetOptions(merge: true));
   }
 }

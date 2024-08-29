@@ -114,6 +114,33 @@ class CustomTextField extends StatelessWidget {
   }
 }
 
+class CustomInputField extends StatelessWidget {
+  const CustomInputField(
+      {super.key,
+      required this.hintText,
+      required this.onChanged,
+      required this.validator});
+  final String hintText;
+  final ValueChanged<String> onChanged;
+  final String? Function(String?) validator;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomTextField(
+      child: TextFormField(
+        onChanged: onChanged,
+        validator: validator,
+        style: const TextStyle(),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: hintText,
+          hintStyle: const TextStyle(color: Colors.grey),
+        ),
+      ),
+    );
+  }
+}
+
 Widget buildInputField({
   required String hintText,
   required ValueChanged<String> onChanged,
@@ -242,5 +269,239 @@ Alert showAlert({
 extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1)}";
+  }
+}
+
+class SettingsScreenUtils {
+  static double? settingsGroupIconSize;
+  static TextStyle? settingsGroupTitleStyle;
+}
+
+class IconStyle {
+  Color? iconsColor;
+  bool? withBackground;
+  Color? backgroundColor;
+  double? borderRadius;
+
+  IconStyle({
+    iconsColor = Colors.white,
+    withBackground = true,
+    backgroundColor = Colors.blue,
+    borderRadius = 8,
+  })  : this.iconsColor = iconsColor,
+        this.withBackground = withBackground,
+        this.backgroundColor = backgroundColor,
+        this.borderRadius = double.parse(borderRadius!.toString());
+}
+
+class SettingsItem extends StatelessWidget {
+  final IconData icons;
+  final IconStyle? iconStyle;
+  final String title;
+  final TextStyle? titleStyle;
+  final String? subtitle;
+  final TextStyle? subtitleStyle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final int? titleMaxLine;
+  final int? subtitleMaxLine;
+  final TextOverflow? overflow;
+
+  const SettingsItem(
+      {super.key,
+      required this.icons,
+      this.iconStyle,
+      required this.title,
+      this.titleStyle,
+      this.subtitle,
+      this.subtitleStyle,
+      this.trailing,
+      this.onTap,
+      this.titleMaxLine,
+      this.subtitleMaxLine,
+      this.overflow = TextOverflow.ellipsis});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: ListTile(
+        onTap: onTap,
+        leading: (iconStyle != null && iconStyle!.withBackground!)
+            ? Container(
+                decoration: BoxDecoration(
+                  color: iconStyle!.backgroundColor,
+                  borderRadius: BorderRadius.circular(iconStyle!.borderRadius!),
+                ),
+                padding: const EdgeInsets.all(5),
+                child: Icon(
+                  icons,
+                  size: SettingsScreenUtils.settingsGroupIconSize,
+                  color: iconStyle!.iconsColor,
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(5),
+                child: Icon(
+                  icons,
+                  size: SettingsScreenUtils.settingsGroupIconSize,
+                ),
+              ),
+        title: Text(
+          title,
+          style: titleStyle ?? const TextStyle(fontWeight: FontWeight.bold),
+          maxLines: titleMaxLine,
+          overflow: titleMaxLine != null ? overflow : null,
+        ),
+        subtitle: (subtitle != null)
+            ? Text(
+                subtitle!,
+                style: subtitleStyle ?? Theme.of(context).textTheme.bodyMedium!,
+                maxLines: subtitleMaxLine,
+                overflow:
+                    subtitleMaxLine != null ? TextOverflow.ellipsis : null,
+              )
+            : null,
+        trailing: (trailing != null) ? trailing : Icon(Icons.navigate_next),
+      ),
+    );
+  }
+}
+
+class SettingsGroup extends StatelessWidget {
+  final String? settingsGroupTitle;
+  final TextStyle? settingsGroupTitleStyle;
+  final List<SettingsItem> items;
+  final EdgeInsets? margin;
+  final Color? backgroundColor;
+  // Icons size
+  final double? iconItemSize;
+
+  SettingsGroup(
+      {this.settingsGroupTitle,
+      this.settingsGroupTitleStyle,
+      required this.items,
+      this.backgroundColor,
+      this.margin,
+      this.iconItemSize = 25});
+
+  @override
+  Widget build(BuildContext context) {
+    if (iconItemSize != null) {
+      SettingsScreenUtils.settingsGroupIconSize = iconItemSize;
+    }
+    return Container(
+      margin: margin ?? const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // The title
+          (settingsGroupTitle != null)
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Text(
+                    settingsGroupTitle!,
+                    style: (settingsGroupTitleStyle == null)
+                        ? const TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold)
+                        : settingsGroupTitleStyle,
+                  ),
+                )
+              : Container(),
+          // The SettingsGroup sections
+          Container(
+            decoration: BoxDecoration(
+              color: backgroundColor ?? Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: ListView.separated(
+              separatorBuilder: (context, index) {
+                return const Divider();
+              },
+              itemCount: items.length,
+              itemBuilder: (BuildContext context, int index) {
+                return items[index];
+              },
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const ScrollPhysics(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SimpleUserCard extends StatelessWidget {
+  final ImageProvider userProfilePic;
+  final String userName;
+  final double? imageRadius;
+  final Widget? userMoreInfo;
+  final VoidCallback? onTap;
+  final TextStyle? textStyle;
+  final Icon? icon;
+
+  const SimpleUserCard({
+    super.key,
+    required this.userProfilePic,
+    required this.userName,
+    this.imageRadius = 10,
+    this.userMoreInfo,
+    this.onTap,
+    this.textStyle,
+    this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    double mediaQueryHeight = MediaQuery.of(context).size.height;
+    double mediaQueryWidth = MediaQuery.of(context).size.width;
+    return Container(
+      width: mediaQueryWidth,
+      height: mediaQueryHeight / 3,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            child: GestureDetector(
+              onTap: (onTap == null) ? () {} : onTap,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(imageRadius!),
+                    child: Image(
+                      image: userProfilePic,
+                      fit: BoxFit.cover,
+                      height: mediaQueryHeight / 5,
+                      width: mediaQueryWidth / 2.6,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: (icon != null)
+                        ? icon!
+                        : const Icon(
+                            Icons.camera,
+                            color: Colors.transparent,
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 3),
+            child: Text(
+              userName,
+              style: (textStyle == null)
+                  ? const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                  : textStyle,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
