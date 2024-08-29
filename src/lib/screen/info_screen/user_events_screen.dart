@@ -7,8 +7,7 @@ import 'package:lookout_dev/screen/info_screen/event_edit.dart';
 import '../../data/account_class.dart';
 
 class UserEventsScreen extends StatefulWidget {
-  final Club myClub;
-  const UserEventsScreen({super.key, required this.myClub});
+  const UserEventsScreen({super.key});
 
   @override
   State<UserEventsScreen> createState() => _UserEventsScreenState();
@@ -26,7 +25,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
       for (String s in idList){
         EventClass? ev = await _eventController.getEvent(eventID: s);
         if (ev != null) {
-          eventsNew.add(ev as EventClass);
+          eventsNew.add(ev);
         }
       }
     }
@@ -34,6 +33,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
       events = eventsNew;
     });
   }
+
 
 
   @override

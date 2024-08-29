@@ -106,19 +106,15 @@ class EventController {
   }
 
   Future editImages(String eventID, int imageIndex, String changes, PlatformFile? newImage) async{
-    DocumentSnapshot dc = await _firestore.doc(eventID).get();
-    Map<String, dynamic> thisEvent = dc.data() as Map<String, dynamic>;
     String newImgPath = "";
 
     if (changes == "delete"){
-      print("Deleting Image");
       newImgPath = "";
     }
     else if ((changes == "new") & (newImage != null)){
       newImgPath = "pictures/event/$eventID/${newImage?.name}";
       final refPic = _storage.child(newImgPath);
       refPic.putFile(File(newImage!.path!));
-      thisEvent['eventImage${imageIndex + 1}'] = newImgPath;
     }
 
     await _firestore.doc(eventID).set({'eventImage${imageIndex + 1}' : newImgPath}, SetOptions(merge: true));

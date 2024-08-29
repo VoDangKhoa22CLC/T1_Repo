@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
@@ -27,6 +29,7 @@ class _HomeState extends State<Home> {
   String _searchQuery = "";
   String _filterQuery = "New";
   final List<String> _filterOptions = <String>["New", "Time↓", "Time↑"];
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =  GlobalKey<RefreshIndicatorState>();
   AppUser? _currentUser;
 
   Future _getUser() async {
@@ -113,8 +116,7 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileScreen(currentClub: _currentUser as Club),
+                      builder: (context) => ProfileScreen(myClub: _currentUser as Club),
                     ),
                   );
                 },
@@ -137,9 +139,7 @@ class _HomeState extends State<Home> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              UserEventsScreen(myClub: _currentUser as Club)),
+                      MaterialPageRoute(builder: (context) => UserEventsScreen()),
                     );
                   },
                 ),
@@ -156,7 +156,7 @@ class _HomeState extends State<Home> {
                         builder: (context) =>
                             EditProfileScreen(myClub: _currentUser as Club),
                       ),
-                    );
+                    ).then((res) => _getUser);
                   },
                 ),
               ),
@@ -296,9 +296,18 @@ class _HomeState extends State<Home> {
                 ),
               ),
               Expanded(
-                child: EventList(
-                  searchQuery: _searchQuery,
-                  sortQuery: _filterQuery,
+                child: RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  color: Theme.of(context).primaryColor,
+                  backgroundColor: Colors.white,
+                  strokeWidth: 2.0,
+                  onRefresh: () async {
+                    _getUser();
+                  },
+                  child: EventList(
+                    searchQuery: _searchQuery,
+                    sortQuery: _filterQuery,
+                  ),
                 ),
               ),
             ],

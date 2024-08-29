@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:lookout_dev/data/account_class.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -12,6 +16,7 @@ class AccountController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference _firestore =
       FirebaseFirestore.instance.collection('users');
+  final Reference _storage = FirebaseStorage.instance.ref();
 
   // Sign Up
   Future<(AppUser?, String?)> signUp({
@@ -411,20 +416,46 @@ class AccountController {
     required String uid,
     required String email,
     required String name,
-    required String description,
-    required String profilePicture,
-    required String profileImage1,
-    required String profileImage2,
-    required String profileImage3,
+    required String description
   }) async {
     await _firestore.doc(uid).set({
       "description": description,
       "email": email,
       "name": name,
-      "profilePicture": profilePicture,
-      "profileImage1": profileImage1,
-      "profileImage2": profileImage2,
-      "profileImage3": profileImage3,
-    }, SetOptions(merge: true));
+    },SetOptions(merge: true));
+
   }
+
+  Future editProfileImages(String clubID, int imageIndex, String changes, PlatformFile? newImage) async{
+    String newImgPath = "";
+
+    if (changes == "delete"){
+      newImgPath = "";
+    }
+
+    else if ((changes == "new") & (newImage != null)){
+      newImgPath = "pictures/club/$clubID/${newImage?.name}";
+      final refPic = _storage.child(newImgPath);
+      refPic.putFile(File(newImage!.path!));
+    }
+
+    await _firestore.doc(clubID).set({'profileImage${imageIndex + 1}' : newImgPath}, SetOptions(merge: true));
+  }
+
+  Future editProfilePic(String clubID, PlatformFile? newImage) async{
+
+    String newImgPath = "pictures/club/$clubID/${newImage?.name}";
+    final refPic = _storage.child(newImgPath);
+    refPic.putFile(File(newImage!.path!));
+
+    await _firestore.doc(clubID).set({'profilePicture' : newImgPath}, SetOptions(merge: true));
+  }
+
+  Future<String> getImageFromUser(String clubID, String terms) async {
+    DocumentSnapshot thisClub = await _firestore.doc(clubID).get();
+    Map<String, dynamic> clubData = thisClub.data() as Map<String, dynamic>;
+
+    return clubData[terms];
+  }
+
 }

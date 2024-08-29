@@ -1,14 +1,40 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/data/account_class.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/event_screen.dart';  
 // import 'package:test_backend/models/school_events.dart';
 
-class EventTile extends StatelessWidget {
-  // final MyEvent myEvent;
+class EventTile extends StatefulWidget {
   final EventClass myEvent;
-
   const EventTile({super.key, required this.myEvent});
+
+  @override
+  State<EventTile> createState() => _EventTileState();
+}
+
+class _EventTileState extends State<EventTile> {
+  String _urlPFP = "";
+  AccountController accountController = AccountController();
+
+  Future _loadPFP() async {
+    String? path = await accountController.getImageFromUser(widget.myEvent.hostID, "profilePicture");
+    if (path != ''){
+      final firebaseStorage = FirebaseStorage.instance.ref().child(path);
+      final url = await firebaseStorage.getDownloadURL();
+      setState(() {
+        _urlPFP = url;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPFP();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,17 +46,19 @@ class EventTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => EventScreen(myEvent: myEvent),
+                builder: (context) => EventScreen(myEvent: widget.myEvent),
               ),
             );
           },
           child: ListTile(
             leading: CircleAvatar(
               radius: 30,
-              backgroundImage: AssetImage('images/avatar_default.png'),
+              backgroundImage: _urlPFP != "" ?
+              Image.network(_urlPFP).image :
+              const Image(image: AssetImage('assets/images/avatar_default.png')).image,
             ),
             title: Text(
-              myEvent.eventName,
+              widget.myEvent.eventName,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -40,7 +68,7 @@ class EventTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  myEvent.hostID,
+                  widget.myEvent.eventLocation,
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -48,7 +76,7 @@ class EventTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  myEvent.eventTime,
+                  widget.myEvent.eventTime,
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -59,6 +87,7 @@ class EventTile extends StatelessWidget {
           ),
         ),
       ),
-    );
+    );;
   }
 }
+

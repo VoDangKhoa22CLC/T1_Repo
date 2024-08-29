@@ -19,6 +19,19 @@ class _EventScreenState extends State<EventScreen> {
   DateTime startDate = DateTime.now();
   final List<String> _urls = <String>["", "", ""];
   bool isStudent = false;
+  String _urlPFP = "";
+  AccountController accountController = AccountController();
+
+  Future _loadPFP() async {
+    String? path = await accountController.getImageFromUser(widget.myEvent.hostID, "profilePicture");
+    if (path != ''){
+      final firebaseStorage = FirebaseStorage.instance.ref().child(path);
+      final url = await firebaseStorage.getDownloadURL();
+      setState(() {
+        _urlPFP = url;
+      });
+    }
+  }
 
   Future _loadImage(String inputURL, int index) async {
     final firebaseStorage = FirebaseStorage.instance.ref().child(inputURL);
@@ -27,6 +40,7 @@ class _EventScreenState extends State<EventScreen> {
       _urls[index] = url;
     });
   }
+
   void _toggleSubscription() async {
     setState(() {
       isSubscribed = !isSubscribed; // Toggle state
@@ -68,6 +82,7 @@ class _EventScreenState extends State<EventScreen> {
       });
     }
     _getSubscription();
+    _loadPFP();
   }
 
   @override
@@ -85,12 +100,16 @@ class _EventScreenState extends State<EventScreen> {
                     Container(
                       height: 250,
                       width: double.infinity,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('images/avatar_default.png'), 
-                          fit: BoxFit.cover,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            end: Alignment.topCenter,
+                            begin: Alignment.bottomCenter,
+                            colors : <Color>[
+                              Theme.of(context).primaryColor,
+                              Colors.white,
+                            ]
                         ),
-                      ),
+                      )
                     ),
                     // Back button
                     Positioned(
@@ -110,9 +129,11 @@ class _EventScreenState extends State<EventScreen> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const CircleAvatar(
+                          CircleAvatar(
                             radius: 50,
-                            backgroundImage: AssetImage('images/avatar_default.png'),
+                            backgroundImage: _urlPFP != "" ?
+                            Image.network(_urlPFP).image :
+                            const Image(image: AssetImage('assets/images/avatar_default.png')).image,
                           ),
                           const SizedBox(width: 16),
                           Column(
@@ -121,7 +142,7 @@ class _EventScreenState extends State<EventScreen> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width - 140,
                                 child: Text(
-                                  widget.myEvent.hostID,
+                                  widget.myEvent.eventName,
                                   style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -146,7 +167,7 @@ class _EventScreenState extends State<EventScreen> {
                     children: [
                       // Event title
                       Text(
-                        widget.myEvent.eventName,
+                        widget.myEvent.hostID,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

@@ -1,23 +1,30 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/data/account_class.dart';
 import 'package:lookout_dev/screen/info_screen/profile_edit.dart';
 
-void main() async{
-  AppUser? curU = await AccountController().getCurrentUser();
-  runApp(MaterialApp(
-    home: ProfileScreen(currentClub: curU as Club),
-  ));
+// void main() async{
+//   AppUser? curU = await AccountController().getCurrentUser();
+//   runApp(MaterialApp(
+//     home: ProfileScreen(currentClub: curU as Club),
+//   ));
+// }
+
+class ProfileScreen extends StatefulWidget {
+  final Club myClub;
+  const ProfileScreen({super.key, required this.myClub});
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class ProfileScreen extends StatelessWidget {
+class _ProfileScreenState extends State<ProfileScreen> {
+  final List<String> _urls = ["", "", ""];
+  String _urlPFP = "";
 
-  final Club currentClub;
-  const ProfileScreen({super.key, required this.currentClub});
-
-
-  Widget _buildNetworkPhoto(String imageUrl) {
+  Widget _buildPhoto(String imageUrl) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ClipRRect(
@@ -30,6 +37,49 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future _loadPFP(String inputURL) async {
+    final firebaseStorage = FirebaseStorage.instance.ref().child(inputURL);
+    final url = await firebaseStorage.getDownloadURL();
+    setState(() {
+      _urlPFP = url;
+    });
+  }
+
+  Future _loadImage(String inputURL, int index) async {
+    final firebaseStorage = FirebaseStorage.instance.ref().child(inputURL);
+    final url = await firebaseStorage.getDownloadURL();
+    setState(() {
+      _urls[index] = url;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.myClub.profileImage1 != '') {
+      setState(() {
+        _loadImage(widget.myClub.profileImage1, 0);
+      });
+    }
+    if (widget.myClub.profileImage2 != '') {
+      setState(() {
+        _loadImage(widget.myClub.profileImage2, 1);
+      });
+    }
+    if (widget.myClub.profileImage3 != '') {
+      setState(() {
+        _loadImage(widget.myClub.profileImage3, 2);
+      });
+    }
+
+    if (widget.myClub.profilePicture != '') {
+      setState(() {
+        _loadPFP(widget.myClub.profilePicture);
+      });
+    }
   }
 
   @override
@@ -46,10 +96,14 @@ class ProfileScreen extends StatelessWidget {
                 // Background image
                 Container(
                   height: 200,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('images/avatar_default.png'),
-                      fit: BoxFit.cover,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        end: Alignment.topCenter,
+                        begin: Alignment.bottomCenter,
+                        colors : <Color>[
+                          Theme.of(context).primaryColor,
+                          Colors.white,
+                        ]
                     ),
                   ),
                 ),
@@ -75,17 +129,17 @@ class ProfileScreen extends StatelessWidget {
                 Positioned(
                   top: 150, // Adjust the overlap by changing the top value
                   left: 0,
-                  right: 0, 
+                  right: 0,
                   child: Center(
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
                       CircleAvatar (
                         radius: 60,
-                        backgroundImage: currentClub.profilePicture != "" ? _buildNetworkPhoto(currentClub.profilePicture) as ImageProvider : const AssetImage("images/avatar_default.png") as ImageProvider,
+                        backgroundImage: _urlPFP != "" ? Image.network(_urlPFP).image : const Image(image: AssetImage("assets/images/avatar_default.png")).image,
                       ),
                       // Add a check mark if the club is verified
-                      if (currentClub.verified == 'true') 
+                      if (widget.myClub.verified == 'true')
                             Positioned(
                               bottom: 0,
                               right: -5,
@@ -112,7 +166,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 60), // Space to account for avatar overlap
             // Club name
             Text(
-              currentClub.name,
+              widget.myClub.name,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -122,7 +176,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 const Icon(Icons.email, color: Colors.grey),
                 const SizedBox(width: 8),
-                Text(currentClub.email),
+                Text(widget.myClub.email),
               ],
             ),
             const SizedBox(height: 10),
@@ -132,7 +186,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 const Icon(Icons.event, color: Colors.grey),
                 const SizedBox(width: 8),
-                Text(' events created.'), 
+                Text(widget.myClub.email),
               ],
             ),
             const SizedBox(height: 20),
@@ -148,7 +202,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    currentClub.description!,
+                    widget.myClub.description!,
                     textAlign: TextAlign.left,
                   ),
                 ],
@@ -168,40 +222,13 @@ class ProfileScreen extends StatelessWidget {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: <String>[
-                        currentClub.profileImage1,currentClub.profileImage2,currentClub.profileImage3,
-                      ].where((url) => (url != "")).map((url) => _buildNetworkPhoto(url)).toList(),
+                      children: _urls.where((url) => (url != "")).map((url) => _buildPhoto(url)).toList(),
                     ),
                   ),
                 ],
               ),
             ),
-            // const SizedBox(height: 20),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-            //     );
-            //   },
-            //   child: const Text('Edit Profile', style: TextStyle(fontSize: 16)),
-            // ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPhoto(String imagePath) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.asset(
-          imagePath,
-          width: 100,
-          height: 100,
-          fit: BoxFit.cover,
         ),
       ),
     );
