@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/data/account_class.dart';
 import 'package:lookout_dev/screen/info_screen/profile_edit.dart';
@@ -73,11 +74,38 @@ class ProfileScreen extends StatelessWidget {
                 // Avatar
                 Positioned(
                   top: 150, // Adjust the overlap by changing the top value
-                  left: MediaQuery.of(context).size.width / 2 - 50,
-                  child: CircleAvatar(
-                    radius: 60,
-                    backgroundImage: currentClub.profilePicture != "" ? _buildNetworkPhoto(currentClub.profilePicture) as ImageProvider : const AssetImage("images/avatar_default.png") as ImageProvider,
-                  ),
+                  left: 0,
+                  right: 0, 
+                  child: Center(
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                      CircleAvatar (
+                        radius: 60,
+                        backgroundImage: currentClub.profilePicture != "" ? _buildNetworkPhoto(currentClub.profilePicture) as ImageProvider : const AssetImage("images/avatar_default.png") as ImageProvider,
+                      ),
+                      // Add a check mark if the club is verified
+                      if (currentClub.verified == 'true') 
+                            Positioned(
+                              bottom: 0,
+                              right: -5,
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 30,
+                                ),
+                              ),
+                            ),
+                      ]
+                    )
+                  )
                 ),
               ],
             ),
@@ -98,13 +126,13 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            // Location with icon
+            // Number of events created
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.location_on, color: Colors.grey),
+                const Icon(Icons.event, color: Colors.grey),
                 const SizedBox(width: 8),
-                Text(currentClub.email),
+                Text(' events created.'), 
               ],
             ),
             const SizedBox(height: 20),
