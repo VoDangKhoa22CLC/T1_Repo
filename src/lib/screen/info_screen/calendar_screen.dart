@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/controller/event.dart';
@@ -32,7 +33,7 @@ class _CalendarState extends State {
   //   setState(() {
   //     _focusedDay = focusedDay;
   //     _selectedDay = selectedDay;
-  //     _selectedEvents = _getEventsForDay(selectedDay);
+  //     _selectedEvents   = _getEventsForDay(selectedDay);
   //     });
   //   }
   // }
@@ -69,22 +70,18 @@ class _CalendarState extends State {
     return Scaffold(
       resizeToAvoidBottomInset : false,
       appBar: AppBar(
-        title: const Text('Calendar'),
+        title: const Text(
+          'Calendar',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 25
+          ),
+        
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
       ),
-      //this button simply add a sample event to the current selected day, for testing.
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: (){
-      //     // setState(() {
-      //     //   if (!eventsAtDay.containsKey(_selectedDay)) {
-      //     //     eventsAtDay[_selectedDay!] = [];
-      //     //   }
-      //     //   eventsAtDay[_selectedDay!]!.add(EventTile(eventName: 'Event'));
-      //     //   _selectedEvents.value = _getEventsForDay(_selectedDay!);
-      //     // });
-      //   },
-      //   child: Icon(Icons.add),
-      // ),
       body: Column(
         children: [
           TableCalendar(
@@ -108,18 +105,91 @@ class _CalendarState extends State {
                 });
               }
             },
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              }
-            },
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true, // Center the title (current month/year)
+              titleTextStyle: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
             onPageChanged: (focusedDay) {
               _focusedDay = focusedDay;
             },
             eventLoader: _getEventsForDay,
+            calendarBuilders: CalendarBuilders(
+              markerBuilder: (context, date, events) {
+                if (events.isNotEmpty) {
+                  if (events.length > 4) {
+                    // Show the number of events when there are more than 4
+                    return Positioned(
+                      right: 1,
+                      bottom: 1,
+                      child: Container(
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Text(
+                          '${events.length}', // Display the number of events
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    );
+                  } else {
+                    // Show dots for 4 or fewer events
+                    return Positioned(
+                      bottom: 1,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(events.length, (index) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 1.5),
+                            width: 6.0,
+                            height: 6.0,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
+                            ),
+                          );
+                        }),
+                      ),
+                    );
+                  }
+                }
+                return null; // No events, no marker
+              },
+            ),
+            calendarStyle: CalendarStyle(
+              selectedDecoration: BoxDecoration(
+                color: Theme.of(context).primaryColor, 
+                shape: BoxShape.circle,
+              ),
+              todayTextStyle: TextStyle(
+                color: Colors.white, 
+              ),
+              selectedTextStyle: TextStyle(
+                color: Colors.white,
+              ),
+            ),
           ),
+           // Adding a thin line separator
+          SizedBox(height: 8),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.6, // 60% of the screen width
+            child: Divider(
+              height: 1,
+              thickness: 3,
+              color: Colors.grey,
+            ),
+          ),
+          SizedBox(height: 4),
           Expanded(
             child: 
             ValueListenableBuilder<List<EventTile>>(valueListenable: _selectedEvents, builder: (context, value, _){

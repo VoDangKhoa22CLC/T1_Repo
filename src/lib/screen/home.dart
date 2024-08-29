@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/calendar_screen.dart';
@@ -65,7 +66,13 @@ class _HomeState extends State<Home> {
           centerTitle: true,
           title: const FittedBox(
             fit: BoxFit.fitWidth,
-            child: Text('HCMUS Lookout'),
+            child: Text(
+              'HCMUS - Lookout',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold
+              )
+            ),
           ),
           backgroundColor: Theme.of(context).primaryColor,
           elevation: 0,
@@ -96,7 +103,16 @@ class _HomeState extends State<Home> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    // const SizedBox(height: 14),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.5, // 60% of the screen width
+                      child: Divider(
+                        height: 1,
+                        thickness: 2,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     Text(
                       _displayName,
                       style: const TextStyle(
@@ -104,7 +120,7 @@ class _HomeState extends State<Home> {
                         fontSize: 24,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    
                     Text(
                       _displayEmail,
                       style: const TextStyle(
