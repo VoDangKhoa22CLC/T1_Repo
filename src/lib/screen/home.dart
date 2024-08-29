@@ -5,6 +5,7 @@ import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/calendar_screen.dart';
 import 'package:lookout_dev/screen/info_screen/club_profile.dart';
+import 'package:lookout_dev/screen/info_screen/setting.dart';
 import 'package:lookout_dev/screen/info_screen/user_screen.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/screen/welcome.dart';
@@ -29,7 +30,8 @@ class _HomeState extends State<Home> {
   String _searchQuery = "";
   String _filterQuery = "New";
   final List<String> _filterOptions = <String>["New", "Time↓", "Time↑"];
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =  GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
   AppUser? _currentUser;
   String _displayName = "";
   String _displayEmail = "";
@@ -41,7 +43,7 @@ class _HomeState extends State<Home> {
       setState(() {
         _currentUser = appUser;
         _displayEmail = _currentUser!.email;
-        _displayName =  _currentUser!.name;
+        _displayName = _currentUser!.name;
       });
     }
   }
@@ -120,7 +122,8 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileScreen(myClub: _currentUser as Club),
+                      builder: (context) =>
+                          ProfileScreen(myClub: _currentUser as Club),
                     ),
                   );
                 },
@@ -143,7 +146,8 @@ class _HomeState extends State<Home> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => UserEventsScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => UserEventsScreen()),
                     );
                   },
                 ),
@@ -179,8 +183,15 @@ class _HomeState extends State<Home> {
               ListTile(
                 leading: const Icon(Icons.settings),
                 title: const Text('Settings'),
-                onTap: () =>
-                    Navigator.pushNamed(context, 'account_settings_screen'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          AccountSettingsScreen(user: _currentUser),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 leading: const Icon(
@@ -272,7 +283,9 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8.0), // Space between the search bar and dropdown
+                    const SizedBox(
+                        width:
+                            8.0), // Space between the search bar and dropdown
                     // Filter button
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),

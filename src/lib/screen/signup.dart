@@ -118,7 +118,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     children: [
                                       const ScreenTitle(title: 'Sign Up'),
                                       _buildDropdown(),
-                                      buildInputField(
+                                      CustomInputField(
                                         hintText: _userType == UserType.Student
                                             ? 'Student Name'
                                             : 'Club Name',
@@ -127,7 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             ? 'Please enter a name'
                                             : null,
                                       ),
-                                      buildInputField(
+                                      CustomInputField(
                                         hintText: 'Email',
                                         onChanged: (value) => _email = value,
                                         validator: (value) {
@@ -141,21 +141,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           return null;
                                         },
                                       ),
-                                      buildInputField(
+                                      PasswordInputField(
                                         hintText: 'Password',
                                         onChanged: (value) => _password = value,
                                         validator: (value) => value!.length < 8
                                             ? 'Password must be at least 8 characters'
-                                            : null, // Can replace with a function here
-                                        obscureText: true,
+                                            : null,
                                       ),
-                                      buildInputField(
-                                        hintText: 'Re-enter Password',
+                                      PasswordInputField(
+                                        hintText: 'Confirm password',
                                         onChanged: (value) {},
                                         validator: (value) => value != _password
                                             ? 'Passwords do not match'
-                                            : null, // Can replace with a function here
-                                        obscureText: true,
+                                            : null,
                                       ),
                                       CustomBottomScreen(
                                         textButton: 'Sign Up',

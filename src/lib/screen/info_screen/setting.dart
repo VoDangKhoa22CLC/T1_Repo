@@ -1,5 +1,8 @@
+import 'dart:ui_web';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/data/account_class.dart';
 import 'package:lookout_dev/screen/components.dart';
@@ -28,7 +31,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       backgroundColor: Colors.white.withOpacity(.94),
       appBar: AppBar(
         leading: BackButton(
-          onPressed: () => Navigator.popAndPushNamed(context, 'home_screen'),
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Settings",
@@ -43,29 +46,22 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         child: ListView(
           children: [
             // Check if the user data is loaded
-            if (widget.user != null)
-              SimpleUserCard(
-                userName: widget.user!.name,
-                userProfilePic: const AssetImage("assets/images/dummy.png"),
-              ),
             // If user data is not loaded, show a loading indicator
             if (widget.user == null)
-              const Center(child: CircularProgressIndicator()),
-
+              const Text('An error occurred while loading user data'),
             SettingsGroup(
               backgroundColor: Colors.white,
+              settingsGroupTitle: "Information",
               items: [
                 SettingsItem(
-                  onTap: () {},
-                  icons: CupertinoIcons.pencil_outline,
-                  iconStyle: IconStyle(),
-                  title: 'Your events',
-                  subtitle: "Have a look at your attended events",
-                  titleMaxLine: 1,
-                  subtitleMaxLine: 1,
-                ),
-                SettingsItem(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AboutScreen(),
+                      ),
+                    );
+                  },
                   icons: Icons.info_rounded,
                   iconStyle: IconStyle(
                     backgroundColor: Colors.purple,
@@ -80,16 +76,27 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               settingsGroupTitle: "Account",
               items: [
                 SettingsItem(
-                  onTap: () => Navigator.pushNamed(context, EditEmailScreen.id),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EditEmailScreen(user: widget.user),
+                      ),
+                    );
+                  },
                   icons: CupertinoIcons.mail_solid,
                   title: "Email",
                   subtitle: widget.user?.email,
                 ),
                 SettingsItem(
                   onTap: () {
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          EditPasswordScreen(user: widget.user),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EditPasswordScreen(user: widget.user),
+                      ),
                     );
                   },
                   icons: CupertinoIcons.lock,
@@ -164,11 +171,10 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Edit Email'),
+        title: const Text('Email'),
         backgroundColor: Theme.of(context).primaryColor,
         leading: BackButton(
-          onPressed: () =>
-              Navigator.popAndPushNamed(context, 'account_settings_screen'),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
@@ -177,7 +183,18 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
           key: _formKey,
           child: Column(
             children: [
-              buildInputField(
+              const Text(
+                'Update your email',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Please enter your new email. We will send you a verification email to ${widget.user?.email ?? 'your current email'}. You will need to confirm the new email address.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              CustomInputField(
                 hintText: 'New Email',
                 onChanged: (value) => _emailController.text = value,
                 validator: (value) {
@@ -217,6 +234,7 @@ class EditPasswordScreen extends StatefulWidget {
 
 class _EditPasswordScreenState extends State<EditPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _oldPasswordController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AccountController _accountController = AccountController();
 
@@ -226,17 +244,45 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     super.dispose();
   }
 
-  void _saveChanges() {
+  Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        // Handle password update here
-        _accountController.changePassword(_passwordController.text);
-      });
+      bool verify =
+          await _accountController.verifyPassword(_passwordController.text);
+      if (verify == false) {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.error,
+          animType: AnimType.topSlide,
+          title: 'Error',
+          desc: 'Incorrect password. Please try again.',
+          onDismissCallback: (type) {},
+          headerAnimationLoop: false,
+          btnOkOnPress: () {},
+          btnOkColor: kTextColor,
+        ).show();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Password updated successfully!')),
-      );
+        return;
+      }
 
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.topSlide,
+        title: 'Success',
+        desc: 'Password changed successfully!',
+        onDismissCallback: (type) {
+          setState(() {
+            _accountController.changePassword(_passwordController.text);
+          });
+        },
+        headerAnimationLoop: false,
+        btnOkOnPress: () {
+          setState(() {
+            _accountController.changePassword(_passwordController.text);
+          });
+        },
+        btnOkColor: kTextColor,
+      ).show();
       Navigator.pop(context);
     }
   }
@@ -246,11 +292,10 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Change Password'),
+        title: const Text('Password'),
         backgroundColor: Theme.of(context).primaryColor,
         leading: BackButton(
-          onPressed: () =>
-              Navigator.popAndPushNamed(context, 'account_settings_screen'),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
@@ -259,39 +304,39 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
           key: _formKey,
           child: Column(
             children: [
-              buildInputField(
+              const Text('Update your password',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 10),
+              const Text(
+                  'Please enter your existing password and your new password.'),
+              const SizedBox(height: 20),
+              PasswordInputField(
                 hintText: 'Current Password',
-                onChanged: (value) => _passwordController.text = value,
+                onChanged: (value) => _oldPasswordController.text = value,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your old password';
                   }
-                  if (_accountController.verifyPassword(value) == false) {
-                    return 'Incorrect password';
-                  }
                   return null;
                 },
-                obscureText: true,
               ),
               const SizedBox(height: 20),
-              buildInputField(
-                hintText: 'Password',
+              PasswordInputField(
+                hintText: 'New Password',
                 onChanged: (value) => _passwordController.text = value,
                 validator: (value) => value!.length < 8
                     ? 'Password must be at least 8 characters'
-                    : null, // Can replace with a function here
-                obscureText: true,
+                    : null,
               ),
               const SizedBox(height: 20),
-              buildInputField(
-                hintText: 'Re-enter Password',
+              PasswordInputField(
+                hintText: 'Re-enter password',
                 onChanged: (value) {},
                 validator: (value) => value != _passwordController.text
-                    ? 'Passwords do not match'
+                    ? 'Re-entered password do not match'
                     : null, // Can replace with a function here
-                obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               CustomButton(
                 buttonText: 'Save Changes',
                 onPressed: _saveChanges,
@@ -300,6 +345,63 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class AboutScreen extends StatelessWidget {
+  const AboutScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('About'),
+        backgroundColor: Theme.of(context).primaryColor,
+        leading: BackButton(
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Image(
+              image: AssetImage('assets/logo/lookout_logo.png'),
+            ),
+            Text(
+              'Version 1.0.0, build#1.0.0',
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'This app was built by',
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              '22127028 Ha Gia Bao',
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              '22127200 Vo Dang Khoa',
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              '22127258 Le Tri Man',
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              '2212724xx Cao Pham Hoang Thai',
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              '221272452 Le Ngoc Vi',
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

@@ -103,7 +103,7 @@ class CustomTextField extends StatelessWidget {
         horizontal: 30,
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           width: 2.5,
           color: kTextColor,
@@ -119,15 +119,18 @@ class CustomInputField extends StatelessWidget {
       {super.key,
       required this.hintText,
       required this.onChanged,
-      required this.validator});
+      required this.validator,
+      this.obscureText = false});
   final String hintText;
   final ValueChanged<String> onChanged;
   final String? Function(String?) validator;
+  final bool obscureText;
 
   @override
   Widget build(BuildContext context) {
     return CustomTextField(
       child: TextFormField(
+        obscureText: obscureText,
         onChanged: onChanged,
         validator: validator,
         style: const TextStyle(),
@@ -135,6 +138,53 @@ class CustomInputField extends StatelessWidget {
           border: InputBorder.none,
           hintText: hintText,
           hintStyle: const TextStyle(color: Colors.grey),
+        ),
+      ),
+    );
+  }
+}
+
+class PasswordInputField extends StatefulWidget {
+  final String hintText;
+  final Function(String) onChanged;
+  final String? Function(String?)? validator;
+
+  const PasswordInputField({
+    super.key,
+    required this.hintText,
+    required this.onChanged,
+    this.validator,
+  });
+
+  @override
+  State<PasswordInputField> createState() => _PasswordInputFieldState();
+}
+
+class _PasswordInputFieldState extends State<PasswordInputField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomTextField(
+      child: TextFormField(
+        obscureText: _obscureText,
+        onChanged: widget.onChanged,
+        validator: widget.validator,
+        style: const TextStyle(),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: widget.hintText,
+          hintStyle: const TextStyle(color: Colors.grey),
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+            ),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
         ),
       ),
     );

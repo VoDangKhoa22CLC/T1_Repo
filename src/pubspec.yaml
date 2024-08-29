@@ -92,6 +92,7 @@ flutter:
     - assets/images/icons/google.png
     - assets/images/icons/linkedin.png
     - assets/images/avatar_default.png
+    - assets/logo/lookout_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
