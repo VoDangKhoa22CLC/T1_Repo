@@ -7,14 +7,14 @@ import 'package:lookout_dev/screen/info_screen/event_edit.dart';
 import '../../data/account_class.dart';
 
 class UserEventsScreen extends StatefulWidget {
-  const UserEventsScreen({super.key});
+  final String isAdmin;
+  const UserEventsScreen({super.key, required this.isAdmin});
 
   @override
   State<UserEventsScreen> createState() => _UserEventsScreenState();
 }
 
 class _UserEventsScreenState extends State<UserEventsScreen> {
-
   List<EventClass> events = <EventClass>[];
   final _eventController = EventController();
 
@@ -34,12 +34,23 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
     });
   }
 
+  Future _getAllEvents() async {
+    List<EventClass> eventsNew = await _eventController.getAllEvents();
 
+    setState(() {
+      events = eventsNew;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    _getAllRelatedEvents();
+    if (widget.isAdmin == "true"){
+      _getAllEvents();
+    }
+    else {
+      _getAllRelatedEvents();
+    }
   }
 
   @override
@@ -74,6 +85,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
+                    _eventController.deleteEvent(eventID: event.eventID);
                     AlertDialog(
                       title: const Text("Delete Event"),
                       content: const Text("Remove this event? (This action can't be undone)"),
@@ -86,7 +98,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
                         ),
                         TextButton(
                           onPressed: () {
-                            EventController().deleteEvent(eventID: event.eventID);
+                            // _eventController.deleteEvent(eventID: event.eventID);
                             // do some saving action here
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Deleted ${event.eventName}')),

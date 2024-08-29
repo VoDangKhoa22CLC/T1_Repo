@@ -76,7 +76,7 @@ class _EventTileState extends State<EventTile> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  widget.myEvent.eventTime,
+                  widget.myEvent.eventTime.toString().split(' ')[0],
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 14,

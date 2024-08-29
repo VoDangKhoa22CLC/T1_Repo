@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:lookout_dev/controller/account.dart';
 
-class ManageClubsScreen extends StatelessWidget {
+import '../../data/account_class.dart';
+
+
+class ManageClubsScreen extends StatefulWidget {
   const ManageClubsScreen({super.key});
 
-  // Function to handle club authorization (Placeholder)
+  @override
+  State<ManageClubsScreen> createState() => _ManageClubsScreenState();
+}
+
+class _ManageClubsScreenState extends State<ManageClubsScreen> {
+  AccountController accountController = AccountController();
+  List<Club> _clubs = [];
+  List<String> _authored = [];
+
   void _authorizeClub(BuildContext context, String clubName) {
     // Placeholder function: Replace with actual authorization logic
     ScaffoldMessenger.of(context).showSnackBar(
@@ -12,6 +24,23 @@ class ManageClubsScreen extends StatelessWidget {
         backgroundColor: Colors.green,
       ),
     );
+  }
+
+  String getVerified(Club cl){
+    return cl.verified;
+  }
+
+  void _getClubs() async {
+    List<Club> myClubs = await accountController.getListClubs();
+    setState(() {
+      _clubs = myClubs;
+      _authored = _clubs.map(getVerified).toList();
+    });
+  }
+  @override
+  void initState(){
+    super.initState();
+    _getClubs();
   }
 
   @override
@@ -33,23 +62,35 @@ class ManageClubsScreen extends StatelessWidget {
             // Placeholder list of clubs with an "Authorize" button
             Expanded(
               child: ListView.builder(
-                itemCount: 5, // Placeholder count for clubs
+                itemCount: _clubs.length, // Placeholder count for clubs
                 itemBuilder: (context, index) {
-                  String clubName = 'Club ${index + 1}'; // Placeholder club name
                   return Card(
                     margin: const EdgeInsets.symmetric(
                         vertical: 8.0, horizontal: 16.0),
                     child: ListTile(
                       leading: const Icon(Icons.group),
-                      title: Text(clubName),
+                      title: Text(_clubs[index].name),
                       subtitle: const Text('Pending Authorization'),
-                      trailing: ElevatedButton(
-                        onPressed: () => _authorizeClub(context, clubName),
+                      trailing: _authored[index] == "false" ? ElevatedButton(
+                        onPressed: () => {
+                          _authorizeClub(context, _clubs[index].name),
+                          setState(() {
+                            _authored[index] = "true";
+                          }),
+                          accountController.verifyClub(_clubs[index].uid)
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                         ),
-                        child: const Text('Authorize'),
-                      ),
+                        child: const Text('Verify'),
+                      ) : ElevatedButton(
+                        onPressed: () => {
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                        ),
+                        child: const Text('Verified'),
+                      )
                     ),
                   );
                 },

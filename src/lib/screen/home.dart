@@ -36,17 +36,34 @@ class _HomeState extends State<Home> {
   AppUser? _currentUser;
   String _displayName = "";
   String _displayEmail = "";
+  String _isAdminControl = "";
 
   Future _getUser() async {
     AppUser? appUser = await AccountController().getCurrentUser();
+    bool testAdmin = await AccountController().isAdmin();
 
     if (appUser != null) {
       setState(() {
         _currentUser = appUser;
         _displayEmail = _currentUser!.email;
         _displayName = _currentUser!.name;
+        _isAdminControl = testAdmin.toString();
       });
     }
+  }
+
+  bool _getCreate() {
+    if (_isAdminControl == "true") {
+      return true;
+    }
+
+    if (_currentUser is Club){
+      Club thisUser = _currentUser as Club;
+      if (thisUser.verified == "true"){
+        return true;
+      }
+    }
+    return false;
   }
 
   @override
@@ -160,22 +177,25 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const UserEventsScreen()),
+                          builder: (context) => UserEventsScreen(isAdmin: _isAdminControl,)),
                     );
                   },
                 ),
               ),
               // New "Manage Clubs" button
-              ListTile(
-                leading: const Icon(Icons.group),
-                title: const Text('Manage Clubs'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ManageClubsScreen()),
-                  );
-                },
+              Visibility(
+                visible: _isAdminControl == "true",
+                child: ListTile(
+                  leading: const Icon(Icons.group),
+                  title: const Text('Manage Clubs'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ManageClubsScreen()),
+                    );
+                  },
+                ),
               ),
               ListTile(
                 leading: const Icon(Icons.settings),
@@ -332,7 +352,7 @@ class _HomeState extends State<Home> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: Visibility(
-          visible: _currentUser is Club,
+          visible: _getCreate(),
           child: SizedBox(
             height: 80,
             width: 140,

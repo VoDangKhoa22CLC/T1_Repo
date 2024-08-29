@@ -485,4 +485,21 @@ class AccountController {
 
     return clubData[terms];
   }
+
+  Future getListClubs() async {
+    final snapshots = FirebaseFirestore.instance.collection('users');
+    final stuff = await snapshots.get();
+    final accounts = stuff.docs.map((doc) => doc.data());
+    List<Club> clubs = accounts.where((acc) => (acc["userType"] == UserType.Club.toString())).map(Club.fromMap).toList();
+    return clubs;
+  }
+
+  Future verifyClub(String clubID) async {
+    await _userCollection.doc(clubID).set({"verified": "true"}, SetOptions(merge: true));
+  }
+
+  Future unverifyClub(String clubID) async {
+    await _userCollection.doc(clubID).set({"verified": "false"}, SetOptions(merge: true));
+  }
+
 }

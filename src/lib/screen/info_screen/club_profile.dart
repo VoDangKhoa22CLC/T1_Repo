@@ -23,6 +23,10 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final List<String> _urls = ["", "", ""];
   String _urlPFP = "";
+  String _clubName = "";
+  String _clubEmail = "";
+  String _clubDescription = "";
+  int _createdEvents = 0;
 
   Widget _buildPhoto(String imageUrl) {
     return Padding(
@@ -80,6 +84,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _loadPFP(widget.myClub.profilePicture);
       });
     }
+
+    if (widget.myClub.hostedEventIds != null) {
+      _createdEvents = widget.myClub.hostedEventIds!.length;
+    }
   }
 
   @override
@@ -124,7 +132,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-
                 // Avatar
                 Positioned(
                   top: 150, // Adjust the overlap by changing the top value
@@ -140,23 +147,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       // Add a check mark if the club is verified
                       if (widget.myClub.verified == 'true')
-                            Positioned(
-                              bottom: 0,
-                              right: -5,
-                              child: Container(
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.check_circle,
-                                  color: Colors.green,
-                                  size: 30,
-                                ),
-                              ),
+                        Positioned(
+                          bottom: 0,
+                          right: -5,
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
                             ),
+                            child: const Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 30,
+                            ),
+                          ),
+                        ),
                       ]
                     )
                   )
@@ -187,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const Icon(Icons.event, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text(
-                  '${widget.myClub.hostedEventIds ?? '0'} events created'
+                 '$_createdEvents events created'
                 )
               ],
             ),

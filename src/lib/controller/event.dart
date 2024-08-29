@@ -9,6 +9,8 @@ import 'package:lookout_dev/template/event_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import '../data/account_class.dart';
+
 class EventController {
   final CollectionReference _firestore = FirebaseFirestore.instance.collection('events');
   final Reference _storage = FirebaseStorage.instance.ref();
@@ -69,9 +71,30 @@ class EventController {
     return event;
   }
 
-  void deleteEvent({
+  Future deleteEvent({
     required String eventID
   }) async {
+    final snapshots = FirebaseFirestore.instance.collection('users');
+    final stuff = await snapshots.get();
+    final accounts = stuff.docs.map((doc) => doc.data());
+    List<String> ls = [];
+    String field = "";
+
+    for (Map<String, dynamic> acc in accounts){
+      if (acc['userType'] == UserType.Student.toString()){
+        field = "attendedEventIds";
+      }
+      else if (acc['userType'] == UserType.Club.toString()){
+        field = "hostedEventIds";
+      }
+
+      if (field != "") {
+        ls = List<String>.from(acc[field]);
+        ls.remove(eventID);
+        await snapshots.doc(acc['uid']).set({field : ls}, SetOptions(merge: true));
+      }
+    }
+
     await _firestore.doc(eventID).delete();
   }
 
@@ -127,6 +150,15 @@ class EventController {
     Map<String, dynamic> data = eventDoc.data() as Map<String, dynamic>;
 
     return EventClass.fromMap(data);
+  }
+
+  Future<List<EventClass>> getAllEvents() async {
+    final snapshots = FirebaseFirestore.instance.collection('events');
+    final stuff = await snapshots.get();
+    final allEvents = stuff.docs.map((doc) => doc.data());
+
+    List<EventClass> eventList = allEvents.map(EventClass.fromMap).toList();
+    return eventList;
   }
 
   List<EventClass> _eventsFromSnapShot(QuerySnapshot snap){
