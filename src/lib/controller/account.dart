@@ -14,8 +14,10 @@ const List<String> scopes = <String>[
 
 class AccountController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final CollectionReference _firestore =
+  final CollectionReference _userCollection =
       FirebaseFirestore.instance.collection('users');
+  final CollectionReference _eventsCollection =
+      FirebaseFirestore.instance.collection('events');
   final Reference _storage = FirebaseStorage.instance.ref();
 
   // Sign Up
@@ -57,7 +59,7 @@ class AccountController {
               profileImage3: "",
               verified: "false");
         }
-        await _firestore.doc(user.uid).set(appUser.toMap());
+        await _userCollection.doc(user.uid).set(appUser.toMap());
         return (appUser, null);
       }
     } on FirebaseAuthException catch (e) {
@@ -107,7 +109,7 @@ class AccountController {
           return (null, 'Please verify your email');
         }
 
-        DocumentSnapshot doc = await _firestore.doc(user.uid).get();
+        DocumentSnapshot doc = await _userCollection.doc(user.uid).get();
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
         if (data['userType'] == UserType.Student.toString()) {
@@ -206,7 +208,7 @@ class AccountController {
   }
 
   Future<void> updateInfo(AppUser user) async {
-    await _firestore.doc(user.uid).set(user.toMap());
+    await _userCollection.doc(user.uid).set(user.toMap());
   }
 
   Future<(AppUser?, String?)> signInWithGoogle() async {
@@ -237,11 +239,11 @@ class AccountController {
 
       if (user != null) {
         // Check if the user already exists in Firestore
-        DocumentSnapshot doc = await _firestore.doc(user.uid).get();
+        DocumentSnapshot doc = await _userCollection.doc(user.uid).get();
 
         if (!doc.exists) {
           // Create a new user document in Firestore
-          await _firestore.doc(user.uid).set({
+          await _userCollection.doc(user.uid).set({
             'uid': user.uid,
             'name': user.displayName,
             'email': user.email,
@@ -271,8 +273,27 @@ class AccountController {
   Future<void> deleteAccount() async {
     User? user = _auth.currentUser;
     if (user != null) {
+      // Get the user document
+      DocumentSnapshot userDoc = await _userCollection.doc(user.uid).get();
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+      // Check if the user is a club (assuming clubs host events)
+      if (userData['userType'] == 'Club') {
+        // Get the list of hosted events
+        List<String> hostedEventIds =
+            List<String>.from(userData['hostedEventIds'] ?? []);
+
+        // Delete each hosted event
+        for (String eventId in hostedEventIds) {
+          await _eventsCollection.doc(eventId).delete();
+        }
+      }
+
+      // Delete the user's account
       await user.delete();
-      await _firestore.doc(user.uid).delete();
+
+      // Delete the user's document from Firestore
+      await _userCollection.doc(user.uid).delete();
     }
   }
 
@@ -280,7 +301,7 @@ class AccountController {
   Future<AppUser?> getCurrentUser() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot doc = await _firestore.doc(user.uid).get();
+      DocumentSnapshot doc = await _userCollection.doc(user.uid).get();
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
       if (data['userType'] == UserType.Student.toString()) {
@@ -313,7 +334,7 @@ class AccountController {
       return [];
     }
 
-    DocumentSnapshot doc = await _firestore.doc(thisUser.uid).get();
+    DocumentSnapshot doc = await _userCollection.doc(thisUser.uid).get();
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     List<String> evList = [];
     String field = "";
@@ -337,7 +358,7 @@ class AccountController {
       List<String> evList = List<String>.from(data[field] as List);
       if (evList.contains(eventID) == false) {
         evList.add(eventID);
-        _firestore
+        _userCollection
             .doc(thisUser.uid)
             .set({field: evList}, SetOptions(merge: true));
       }
@@ -350,7 +371,7 @@ class AccountController {
       return [];
     }
 
-    DocumentSnapshot doc = await _firestore.doc(thisUser.uid).get();
+    DocumentSnapshot doc = await _userCollection.doc(thisUser.uid).get();
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     List<String> evList = [];
     String field = "";
@@ -373,14 +394,14 @@ class AccountController {
     if (field != "") {
       List<String> evList = List<String>.from(data[field] as List);
       evList.remove(eventID);
-      _firestore
+      _userCollection
           .doc(thisUser.uid)
           .set({field: evList}, SetOptions(merge: true));
     }
   }
 
   Future<Club?> getClub({required String clubID}) async {
-    DocumentSnapshot eventDoc = await _firestore.doc(clubID).get();
+    DocumentSnapshot eventDoc = await _userCollection.doc(clubID).get();
     Map<String, dynamic> data = eventDoc.data() as Map<String, dynamic>;
 
     return Club.fromMap(data);
@@ -425,7 +446,7 @@ class AccountController {
       required String email,
       required String name,
       required String description}) async {
-    await _firestore.doc(uid).set({
+    await _userCollection.doc(uid).set({
       "description": description,
       "email": email,
       "name": name,
@@ -444,7 +465,7 @@ class AccountController {
       refPic.putFile(File(newImage!.path!));
     }
 
-    await _firestore.doc(clubID).set(
+    await _userCollection.doc(clubID).set(
         {'profileImage${imageIndex + 1}': newImgPath}, SetOptions(merge: true));
   }
 
@@ -453,13 +474,13 @@ class AccountController {
     final refPic = _storage.child(newImgPath);
     refPic.putFile(File(newImage!.path!));
 
-    await _firestore
+    await _userCollection
         .doc(clubID)
         .set({'profilePicture': newImgPath}, SetOptions(merge: true));
   }
 
   Future<String> getImageFromUser(String clubID, String terms) async {
-    DocumentSnapshot thisClub = await _firestore.doc(clubID).get();
+    DocumentSnapshot thisClub = await _userCollection.doc(clubID).get();
     Map<String, dynamic> clubData = thisClub.data() as Map<String, dynamic>;
 
     return clubData[terms];
