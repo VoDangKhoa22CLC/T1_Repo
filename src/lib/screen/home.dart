@@ -31,6 +31,8 @@ class _HomeState extends State<Home> {
   final List<String> _filterOptions = <String>["New", "Time↓", "Time↑"];
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =  GlobalKey<RefreshIndicatorState>();
   AppUser? _currentUser;
+  String _displayName = "";
+  String _displayEmail = "";
 
   Future _getUser() async {
     AppUser? appUser = await AccountController().getCurrentUser();
@@ -38,6 +40,8 @@ class _HomeState extends State<Home> {
     if (appUser != null) {
       setState(() {
         _currentUser = appUser;
+        _displayEmail = _currentUser!.email;
+        _displayName =  _currentUser!.name;
       });
     }
   }
@@ -79,10 +83,10 @@ class _HomeState extends State<Home> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Profile',
                       style: TextStyle(
                         color: Colors.white,
@@ -90,18 +94,18 @@ class _HomeState extends State<Home> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 14),
+                    const SizedBox(height: 14),
                     Text(
-                      'Username',
-                      style: TextStyle(
+                      _displayName,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
-                      'user@example.com',
-                      style: TextStyle(
+                      _displayEmail,
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 16,
                       ),
@@ -268,9 +272,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                        width:
-                            8.0), // Space between the search bar and dropdown
+                    const SizedBox(width: 8.0), // Space between the search bar and dropdown
                     // Filter button
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -320,21 +322,24 @@ class _HomeState extends State<Home> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: SizedBox(
-          height: 80,
-          width: 140,
-          child: FloatingActionButton(
-            backgroundColor: Colors.lightBlueAccent,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => CreateEventScreen(
-                          myClub: _currentUser as Club,
-                        )),
-              );
-            },
-            child: const Text('CREATE EVENT'),
+        floatingActionButton: Visibility(
+          visible: _currentUser is Club,
+          child: SizedBox(
+            height: 80,
+            width: 140,
+            child: FloatingActionButton(
+              backgroundColor: Colors.lightBlueAccent,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CreateEventScreen(
+                            myClub: _currentUser as Club,
+                          )),
+                );
+              },
+              child: const Text('CREATE EVENT'),
+            ),
           ),
         ),
       ),
