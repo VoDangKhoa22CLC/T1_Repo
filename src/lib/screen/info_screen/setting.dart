@@ -141,7 +141,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                               onPressed: () {
                                 controller.signOut();
                                 controller.deleteAccount();
-                                Navigator.pop(context);
                                 Navigator.popAndPushNamed(
                                     context, 'welcome_screen');
                               },
