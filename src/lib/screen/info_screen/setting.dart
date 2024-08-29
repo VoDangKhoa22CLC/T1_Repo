@@ -1,5 +1,3 @@
-import 'dart:ui_web';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -262,7 +260,7 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
               ),
               const SizedBox(height: 10),
               const Text(
-                'Please enter your new email. We will send you a verification email. You will need to confirm the new email address.',
+                'Please enter your new email and current password. We will send you a verification email. You will need to confirm the new email address.',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
