@@ -222,7 +222,7 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
         animType: AnimType.topSlide,
         title: 'Verify Your Email',
         desc:
-            'A verification email has been sent to your email address. Your email has been changed but not verified.',
+            'A verification email has been sent to your email address. Your email will not be changed until you verify your new email.',
         onDismissCallback: (type) {
           Navigator.pop(context);
         },
