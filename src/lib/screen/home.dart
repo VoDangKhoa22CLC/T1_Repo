@@ -3,13 +3,13 @@ import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/calendar_screen.dart';
 import 'package:lookout_dev/screen/info_screen/club_profile.dart';
-import 'package:lookout_dev/screen/info_screen/setting.dart';
 import 'package:lookout_dev/screen/info_screen/user_screen.dart';
 import 'package:lookout_dev/controller/account.dart';
 import 'package:lookout_dev/screen/welcome.dart';
 import 'package:lookout_dev/screen/info_screen/event_create.dart';
 import 'package:provider/provider.dart';
 import 'package:lookout_dev/screen/info_screen/user_events_screen.dart';
+import 'package:lookout_dev/screen/info_screen/manage_clubs_screen.dart';
 
 import '../data/account_class.dart';
 import 'info_screen/profile_edit.dart';
@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
                 ),
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
                       'Profile',
                       style: TextStyle(
@@ -160,18 +160,24 @@ class _HomeState extends State<Home> {
                   },
                 ),
               ),
+              // New "Manage Clubs" button
               ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text('Settings'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            AccountSettingsScreen(user: _currentUser),
-                      ),
-                    );
-                  }),
+                leading: const Icon(Icons.group),
+                title: const Text('Manage Clubs'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ManageClubsScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Settings'),
+                onTap: () =>
+                    Navigator.pushNamed(context, 'account_settings_screen'),
+              ),
               ListTile(
                 leading: const Icon(
                   Icons.logout,
