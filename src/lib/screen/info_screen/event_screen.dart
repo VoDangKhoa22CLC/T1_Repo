@@ -185,7 +185,7 @@ class _EventScreenState extends State<EventScreen> {
                       const SizedBox(height: 8),
                       // Event datetime
                       Text(
-                        widget.myEvent.eventTime,
+                        widget.myEvent.eventTime.toString().split(' ')[0],
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
@@ -200,7 +200,16 @@ class _EventScreenState extends State<EventScreen> {
                           color: Colors.grey,
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Subscribers: ${widget.myEvent.subscribers}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
                       const SizedBox(height: 16),
+
                       // Description section
                       const Divider(),
                       const Text(
