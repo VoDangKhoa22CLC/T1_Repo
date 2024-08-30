@@ -83,6 +83,7 @@ class _CalendarState extends State {
         centerTitle: true,
       ),
       body: Column(
+
         children: [
           TableCalendar(
             firstDay: DateTime(2010, 10, 20),

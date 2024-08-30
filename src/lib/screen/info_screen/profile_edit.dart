@@ -19,7 +19,6 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   String _clubName = "";
-  String _clubEmail = "";
   String _clubIntro = "";
 
   final List<PlatformFile?> _pickedImage = <PlatformFile?>[null, null, null];
@@ -84,8 +83,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Image.file(File(_pickedImage[index]!.path!), width: 120, height: 120,),
             IconButton(
               onPressed: (){_unselectPicture(index);},
-              icon: const Icon(Icons.cancel_outlined),
-              color: Colors.white,
+              icon: const Icon(Icons.cancel_outlined, color: Colors.black),
+              style: IconButton.styleFrom(backgroundColor: Colors.white),
             ),
           ]
       ),
@@ -100,11 +99,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: <Widget>[
               IconButton(
                 onPressed: (){_selectPicture(index);},
-                icon: const Icon(Icons.change_circle_outlined),
+                icon: const Icon(Icons.change_circle_outlined, color: Colors.black),
+                style: IconButton.styleFrom(backgroundColor: Colors.white),
               ),
               IconButton(
                 onPressed: (){_unselectPicture(index);},
-                icon: const Icon(Icons.cancel_outlined),
+                icon: const Icon(Icons.cancel_outlined, color: Colors.black,),
+                style: IconButton.styleFrom(backgroundColor: Colors.white),
               )
             ],
           )
@@ -118,7 +119,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           const SizedBox(width: 120, height: 120),
           IconButton(
             onPressed: (){_selectPicture(index);},
-            icon: const Icon(Icons.add_photo_alternate_outlined),
+            icon: const Icon(Icons.add_photo_alternate_outlined, color: Colors.black),
+            style: IconButton.styleFrom(backgroundColor: Colors.white),
           )
         ],
       ),
@@ -154,7 +156,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() {
       _clubName = widget.myClub.name;
       _clubIntro = widget.myClub.description!;
-      _clubEmail = widget.myClub.email;
     });
   }
 
@@ -214,7 +215,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           backgroundImage:
                           _clubPFP != null ? Image.file(File(_clubPFP!.path!)).image
                           : _urlPFP != "" ? Image.network(_urlPFP).image:
-                          const AssetImage('images/avatar_default.png'),
+                          const AssetImage('assets/images/avatar_default.png'),
                         ),
                         IconButton(
                           onPressed: (){_selectProfilePicture();},
@@ -242,20 +243,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onSaved: (value){
                         setState(() {
                           _clubName = value!;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    // Email field
-                    TextFormField(
-                      initialValue: _clubEmail,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                      ),
-                      onSaved: (value){
-                        setState(() {
-                          _clubEmail = value!;
                         });
                       },
                     ),
@@ -298,9 +285,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           _showConfirmationDialog(context,
                           'Save Changes',
                           'Do you want to save changes to the profile?',
-                              _clubName, _clubEmail, _clubIntro, _pickedImage, _urls, _clubPFP);
+                              _clubName, _clubIntro, _pickedImage, _urls, _clubPFP);
                         },
-                        child: const Text('Save Changes'),
+                        child: Text('Save Changes', style: TextStyle(color: Theme.of(context).primaryColor)),
                       ),
                     ),
                   ],
@@ -316,7 +303,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 // General method to show a confirmation dialog with customizable title and description
 // Should put this somewhere, like utility 
 void _showConfirmationDialog(BuildContext context,
-    String title, String description, String name, String email, String desc,
+    String title, String description, String name, String desc,
     List<PlatformFile?> imgNew, List<String> imgOld, PlatformFile? pfp) {
   showDialog(
     context: context,
@@ -336,7 +323,6 @@ void _showConfirmationDialog(BuildContext context,
               // do some saving action here
               accountController.editClubProfile(
                   uid: widget.myClub.uid,
-                  email: email,
                   name: name,
                   description: desc
               );

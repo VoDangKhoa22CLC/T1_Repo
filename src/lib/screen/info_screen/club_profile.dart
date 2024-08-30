@@ -239,10 +239,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Center(
               child: ElevatedButton.icon(
-                label: const Text('Manage Profile'),
+                label: Text('Manage Profile', style: TextStyle(color: Theme.of(context).primaryColor)),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  textStyle: TextStyle(fontSize: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  textStyle: const TextStyle(fontSize: 16.0),
                 ),
                 onPressed: () {
                   Navigator.push(

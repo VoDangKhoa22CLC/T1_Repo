@@ -29,8 +29,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final controller = AccountController();
   String _searchQuery = "";
-  String _filterQuery = "New";
-  final List<String> _filterOptions = <String>["New", "Time↓", "Time↑"];
+  String _filterQuery = "Soon";
+  final List<String> _filterOptions = <String>["Soon", "Late", "A-Z", "Z-A", "Trend", "Flop"];
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
   AppUser? _currentUser;
@@ -55,6 +55,14 @@ class _HomeState extends State<Home> {
   bool _getCreate() {
     if (_isAdminControl == "true") {
       return true;
+    }
+
+    if (_currentUser == null) {
+      return false;
+    }
+
+    if (_currentUser is! Club){
+      return false;
     }
 
     if (_currentUser is Club){
@@ -89,13 +97,6 @@ class _HomeState extends State<Home> {
           ),
           backgroundColor: Theme.of(context).primaryColor,
           elevation: 0,
-          actions: <Widget>[
-            IconButton(
-              iconSize: 40,
-              icon: const Icon(Icons.person),
-              onPressed: () {},
-            ),
-          ],
         ),
         drawer: Drawer(
           child: ListView(

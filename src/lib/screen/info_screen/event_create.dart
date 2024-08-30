@@ -100,8 +100,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             Image.file(File(_pickedImage[index]!.path!), width: 120, height: 120,),
             IconButton(
               onPressed: (){_unselectPicture(index);},
-              icon: const Icon(Icons.motion_photos_off_outlined),
-              color: Colors.white,
+              icon: const Icon(Icons.motion_photos_off_outlined, color: Colors.black),
+              style: IconButton.styleFrom(backgroundColor: Colors.white),
             ),
           ]
       ),
@@ -110,10 +110,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          SizedBox(width: 120, height: 120),
+          const SizedBox(width: 120, height: 120),
           IconButton(
             onPressed: (){_selectPicture(index);},
-            icon: const Icon(Icons.add_photo_alternate_outlined),
+            icon: const Icon(Icons.add_photo_alternate_outlined, color: Colors.black),
+            style: IconButton.styleFrom(backgroundColor: Colors.white),
           )
         ],
       ),

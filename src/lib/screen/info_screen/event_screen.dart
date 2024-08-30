@@ -20,6 +20,7 @@ class _EventScreenState extends State<EventScreen> {
   final List<String> _urls = <String>["", "", ""];
   bool isStudent = false;
   String _urlPFP = "";
+  String _hostedClub = "";
   AccountController accountController = AccountController();
 
   Future _loadPFP() async {
@@ -46,20 +47,28 @@ class _EventScreenState extends State<EventScreen> {
       isSubscribed = !isSubscribed; // Toggle state
     });
     if (isSubscribed) {
-      await AccountController().appendEvents(widget.myEvent.eventID);
+      await accountController.appendEvents(widget.myEvent.eventID);
     } else {
-      await AccountController().removeEvents(widget.myEvent.eventID);
+      await accountController.removeEvents(widget.myEvent.eventID);
     }
   }
 
   void _getSubscription() async {
-      AppUser? currentUser = (await AccountController().getCurrentUser());
+      AppUser? currentUser = (await accountController.getCurrentUser());
       if (currentUser is Student){
         setState(() {
           isSubscribed = currentUser.attendedEventIds!.contains(widget.myEvent.eventID);
           isStudent = true;
         });
       }
+
+      Club? hostClub = await accountController.getClub(clubID: widget.myEvent.hostID);
+      if (hostClub != null){
+        setState(() {
+          _hostedClub = hostClub.name;
+        });
+      }
+
   }
 
   @override
@@ -167,7 +176,7 @@ class _EventScreenState extends State<EventScreen> {
                     children: [
                       // Event title
                       Text(
-                        widget.myEvent.hostID,
+                        "Hosted by $_hostedClub",
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -203,7 +212,7 @@ class _EventScreenState extends State<EventScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        widget.myEvent.eventShortDescription,
+                        widget.myEvent.eventLongDescription,
                         style: const TextStyle(
                           fontSize: 14,
                         ),
@@ -225,6 +234,13 @@ class _EventScreenState extends State<EventScreen> {
                           children: _urls.where((url) => (url != "")).map((url) => _buildPhoto(url)).toList(),
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.myEvent.eventShortDescription,
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      )
                     ],
                   ),
                 ),

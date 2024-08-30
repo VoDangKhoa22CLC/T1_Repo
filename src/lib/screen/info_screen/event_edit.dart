@@ -44,7 +44,6 @@ class _EventEditScreenState extends State<EventEditScreen> {
       );
       // after creating, return to home or pop a noti
       Navigator.pop(context);
-      Navigator.pop(context);
     }
   }
 
@@ -114,8 +113,8 @@ class _EventEditScreenState extends State<EventEditScreen> {
             Image.file(File(_pickedImage[index]!.path!), width: 120, height: 120,),
             IconButton(
               onPressed: (){_unselectPicture(index);},
-              icon: const Icon(Icons.cancel_outlined),
-              color: Colors.white,
+              icon: const Icon(Icons.cancel_outlined, color: Colors.black,),
+              style: IconButton.styleFrom(backgroundColor: Colors.white),
             ),
           ]
       ),
@@ -130,11 +129,13 @@ class _EventEditScreenState extends State<EventEditScreen> {
             children: <Widget>[
               IconButton(
                 onPressed: (){_selectPicture(index);},
-                icon: const Icon(Icons.change_circle_outlined),
+                icon: const Icon(Icons.change_circle_outlined, color: Colors.black,),
+                style: IconButton.styleFrom(backgroundColor: Colors.white),
               ),
               IconButton(
                 onPressed: (){_unselectPicture(index);},
-                icon: const Icon(Icons.cancel_outlined),
+                icon: const Icon(Icons.cancel_outlined, color: Colors.black),
+                style: IconButton.styleFrom(backgroundColor: Colors.white),
               )
             ],
           )
@@ -148,7 +149,8 @@ class _EventEditScreenState extends State<EventEditScreen> {
           const SizedBox(width: 120, height: 120),
           IconButton(
             onPressed: (){_selectPicture(index);},
-            icon: const Icon(Icons.add_photo_alternate_outlined),
+            icon: const Icon(Icons.add_photo_alternate_outlined, color: Colors.black),
+            style: IconButton.styleFrom(backgroundColor: Colors.white),
           )
         ],
       ),
@@ -179,6 +181,7 @@ class _EventEditScreenState extends State<EventEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Edit Event'),
         backgroundColor: Theme.of(context).primaryColor,
@@ -256,40 +259,6 @@ class _EventEditScreenState extends State<EventEditScreen> {
                 ),
                 const SizedBox(height: 10),
                 // Select Date
-                TextFormField(
-                  controller: TextEditingController(text: _eventDate.toLocal().toString().split(' ')[0]),
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: 'Event Date',
-                    labelStyle: const TextStyle(color: Colors.black87),
-                    filled: true,
-                    fillColor: Colors.blue[50],
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).primaryColor)
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).primaryColor)
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.calendar_today),
-                      onPressed: () => _selectDate(context),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value != null) {
-                      String year = value.split('-')[0];
-                      String month = value.split('-')[1];
-                      String day = value.split('-')[2];
-                      if ((int.parse(year) < DateTime.now().year) ||
-                          (int.parse(year) == DateTime.now().year && int.parse(month) < DateTime.now().month) ||
-                          (int.parse(year) == DateTime.now().year && int.parse(month) == DateTime.now().month && int.parse(day) < DateTime.now().day)
-                      )
-                        return 'Please enter a valid date';
-                      return null;
-                    }
-                    return null;
-                  },
-                ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[

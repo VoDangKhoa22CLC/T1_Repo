@@ -199,12 +199,21 @@ class _EventListState extends State<EventList> {
   @override
   Widget build(BuildContext context) {
     final events = Provider.of<List<EventClass>?>(context);
-    if (widget.sortQuery == "Time↓") {
+    if (widget.sortQuery == "Soon") {
       events?.sort((a, b) => a.eventTime.compareTo(b.eventTime));
     }
-    else if (widget.sortQuery == "Time↑"){
+    else if (widget.sortQuery == "Late"){
       events?.sort((a, b) => b.eventTime.compareTo(a.eventTime));
+    } else if (widget.sortQuery == "A-Z"){
+      events?.sort((a, b) => a.eventName.compareTo(b.eventName));
+    } else if (widget.sortQuery == "Z-A"){
+      events?.sort((a, b) => b.eventName.compareTo(a.eventName));
+    } else if (widget.sortQuery == "Trend"){
+      events?.sort((a, b) => a.subscribers.compareTo(b.subscribers));
+    } else if (widget.sortQuery == "Flop"){
+      events?.sort((a, b) => b.subscribers.compareTo(a.subscribers));
     }
+
 
     final filtered = events?.where((event) => event.eventName.contains(widget.searchQuery)).toList();
 

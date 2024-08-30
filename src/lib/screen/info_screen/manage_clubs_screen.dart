@@ -54,6 +54,7 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 20),
             const Text(
               'Clubs management',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -70,7 +71,7 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> {
                     child: ListTile(
                       leading: const Icon(Icons.group),
                       title: Text(_clubs[index].name),
-                      subtitle: const Text('Pending Authorization'),
+                      subtitle: _authored[index] == "false" ? const Text('Pending Authorization') : const Text(""),
                       trailing: _authored[index] == "false" ? ElevatedButton(
                         onPressed: () => {
                           _authorizeClub(context, _clubs[index].name),

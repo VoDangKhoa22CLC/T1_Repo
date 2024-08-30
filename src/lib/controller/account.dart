@@ -443,12 +443,10 @@ class AccountController {
 
   Future editClubProfile(
       {required String uid,
-      required String email,
       required String name,
       required String description}) async {
     await _userCollection.doc(uid).set({
       "description": description,
-      "email": email,
       "name": name,
     }, SetOptions(merge: true));
   }
