@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lookout_dev/screen/welcome.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'components.dart';
 import 'home.dart';

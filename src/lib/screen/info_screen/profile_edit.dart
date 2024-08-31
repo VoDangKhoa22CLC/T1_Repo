@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:lookout_dev/controller/account.dart';
-import 'package:lookout_dev/data/event_class.dart';
 
 import '../../data/account_class.dart';
 

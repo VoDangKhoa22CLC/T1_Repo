@@ -146,18 +146,21 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('Profile'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileScreen(myClub: _currentUser as Club),
-                    ),
-                  );
-                },
+              Visibility(
+                visible: _currentUser is Club,
+                child: ListTile(
+                  leading: const Icon(Icons.person),
+                  title: const Text('Profile'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProfileScreen(myClub: _currentUser as Club),
+                      ),
+                    );
+                  },
+                ),
               ),
               ListTile(
                 leading: const Icon(Icons.calendar_today),

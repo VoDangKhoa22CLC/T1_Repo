@@ -87,7 +87,7 @@ class _EventTileState extends State<EventTile> {
           ),
         ),
       ),
-    );;
+    );
   }
 }
 

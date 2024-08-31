@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'components.dart';
-import 'welcome.dart';
 import 'login.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:lookout_dev/controller/account.dart';

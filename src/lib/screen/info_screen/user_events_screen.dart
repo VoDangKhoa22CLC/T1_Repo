@@ -4,7 +4,6 @@ import 'package:lookout_dev/controller/event.dart';
 import 'package:lookout_dev/data/event_class.dart';
 import 'package:lookout_dev/screen/info_screen/event_edit.dart';
 
-import '../../data/account_class.dart';
 
 class UserEventsScreen extends StatefulWidget {
   final String isAdmin;
